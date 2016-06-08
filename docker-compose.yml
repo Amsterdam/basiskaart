@@ -1,0 +1,38 @@
+database:
+  image: admin.datapunt.amsterdam.nl:5000/atlas/postgres
+  environment:
+    POSTGRES_PASSWORD: insecure
+    POSTGRES_USER: kbk
+
+importer:
+  build: .
+  links:
+    - database:database
+  volumes:
+    - /mnt/data/diva_import:/app/kbk
+  environment:
+    DB_NAME: kbk
+    DB_USER: kbk
+    DB_PASSWORD: insecure
+  command: >
+    bash -c "/app/docker-wait.sh \
+            && /app/createdb.sh \
+            && /app/import_kbk10.sh \
+            && /app/import_kbk50.sh"
+
+db-backup:
+  image: admin.datapunt.amsterdam.nl:5000/atlas/postgres
+  links:
+    - database:db
+  volumes:
+    - ./backups:/tmp/backups
+  command: >
+    bash -c "echo db:5432:kbk:kbk:insecure > ~/.pgpass \
+            && chmod 600 ~/.pgpass \
+            && pg_dump --clean \
+                        -Fc \
+                        -n kbk10 \
+                        -n kbk50 \
+                        -U kbk \
+                        -h db -p 5432 \
+                        kbk > /tmp/backups/database.dump"
