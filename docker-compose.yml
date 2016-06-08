@@ -2,7 +2,7 @@ database:
   image: admin.datapunt.amsterdam.nl:5000/atlas/postgres
   environment:
     POSTGRES_PASSWORD: insecure
-    POSTGRES_USER: kbk
+    POSTGRES_USER: basiskaart
 
 importer:
   build: .
@@ -11,8 +11,8 @@ importer:
   volumes:
     - /mnt/data/diva_import:/app/kbk
   environment:
-    DB_NAME: kbk
-    DB_USER: kbk
+    DB_NAME: basiskaart
+    DB_USER: basiskaart
     DB_PASSWORD: insecure
   command: >
     bash -c "/app/docker-wait.sh \
@@ -27,12 +27,12 @@ db-backup:
   volumes:
     - ./backups:/tmp/backups
   command: >
-    bash -c "echo db:5432:kbk:kbk:insecure > ~/.pgpass \
+    bash -c "echo db:5432:basiskaart:basiskaart:insecure > ~/.pgpass \
             && chmod 600 ~/.pgpass \
             && pg_dump --clean \
                         -Fc \
                         -n kbk10 \
                         -n kbk50 \
-                        -U kbk \
+                        -U basiskaart \
                         -h db -p 5432 \
-                        kbk > /tmp/backups/database.dump"
+                        basiskaart > /tmp/backups/database.dump"
