@@ -18,7 +18,7 @@ for d in $rootdir/basis $rootdir/plus; do
 
             # Load data into database
             echo "Importing: " $SRC_SHP_FILE;
-            ogr2ogr -progress -skipfailures -overwrite -f "PostgreSQL" PG:"${PG}" ${CONFIG} -gt 65536 -s_srs "EPSG:28992" -t_srs "EPSG:28992" $SRC_SHP_FILE ${LCO} 2>&1 > /tmp/error_import.log
+            ogr2ogr -nlt PROMOTE_TO_MULTI -progress -skipfailures -overwrite -f "PostgreSQL" PG:"${PG}" ${CONFIG} -gt 65536 -s_srs "EPSG:28992" -t_srs "EPSG:28992" $SRC_SHP_FILE ${LCO} 2>&1 > /tmp/error_import.log
 
         done
     fi
