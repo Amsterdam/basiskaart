@@ -18,7 +18,8 @@ importer:
     bash -c "/app/docker-wait.sh \
             && /app/createdb.sh \
             && /app/import_kbk10.sh \
-            && /app/import_kbk50.sh"
+            && /app/import_kbk50.sh \
+            && /app/create_indexes.sh"
 
 db-backup:
   image: admin.datapunt.amsterdam.nl:5000/atlas/postgres
