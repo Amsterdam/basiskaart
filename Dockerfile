@@ -11,5 +11,5 @@ RUN apt-get update \
 WORKDIR /app
 
 USER datapunt
-COPY *.sh /app/
+COPY *.sh *.sql /app/
 
