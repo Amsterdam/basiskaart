@@ -21,7 +21,7 @@ for d in $tempdir $rootdir/plus; do
     if [ "$SRC_SHP_FILES" ]; then
 
         PG="host=${DATABASE_PORT_5432_TCP_ADDR} port=5432 ACTIVE_SCHEMA=kbk10 user=${DB_USER} dbname=${DB_NAME} password=${DB_PASSWORD}"
-        LCO="-lco SPATIAL_INDEX=OFF -lco PRECISION=NO -lco LAUNDER=NO -lco GEOMETRY_NAME=geom"
+        LCO="-lco SPATIAL_INDEX=ON -lco PRECISION=NO -lco LAUNDER=NO -lco GEOMETRY_NAME=geom"
         CONFIG="--config PG_USE_COPY YES"
 
         export PGCLIENTENCODING=UTF8;
