@@ -34,6 +34,8 @@ db-backup:
                         -Fc \
                         -n kbk10 \
                         -n kbk50 \
+                        -n bgt \
+                        -n teksten \
                         -U basiskaart \
                         -h db -p 5432 \
                         basiskaart > /tmp/backups/database.dump"
