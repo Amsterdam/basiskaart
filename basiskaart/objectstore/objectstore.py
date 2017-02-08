@@ -2,7 +2,8 @@ import logging
 
 from swiftclient.client import Connection
 
-import basiskaart_setup
+from basiskaart_setup import BASISKAART_OBJECTSTORE_PASSWORD
+from basiskaart_setup import BGT_OBJECTSTORE_PASSWORD
 
 log = logging.getLogger(__name__)
 
@@ -19,22 +20,24 @@ OBJECTSTORE = {
     'os_options': {
         'tenant_id': None,
         'region_name': 'NL'}
-        }
+}
 
 
-class ObjectStore():
+class ObjectStore:
     RESP_LIMIT = 10000  # serverside limit of the response
 
     def __init__(self, container, name):
         if name == 'bag_brk':
             OBJECTSTORE['user'] = 'bag_brk'
-            OBJECTSTORE['key'] = basiskaart_setup.BASISKAART_OBJECTSTORE_PASSWORD
-            OBJECTSTORE['os_options']['tenant_id'] = '4f2f4b6342444c84b3580584587cfd18'
+            OBJECTSTORE['key'] = BASISKAART_OBJECTSTORE_PASSWORD
+            OBJECTSTORE['os_options'][
+                'tenant_id'] = '4f2f4b6342444c84b3580584587cfd18'
             OBJECTSTORE['tenant_name'] = 'BGE000081_BAG'
         else:
             OBJECTSTORE['user'] = 'basiskaart'
-            OBJECTSTORE['key'] = basiskaart_setup.BGT_OBJECTSTORE_PASSWORD
-            OBJECTSTORE['os_options']['tenant_id'] = '1776010a62684386a08b094d89ce08d9'
+            OBJECTSTORE['key'] = BGT_OBJECTSTORE_PASSWORD
+            OBJECTSTORE['os_options'][
+                'tenant_id'] = '1776010a62684386a08b094d89ce08d9'
             OBJECTSTORE['tenant_name'] = 'BGE000081_BGT'
 
         self.conn = Connection(**OBJECTSTORE)
@@ -59,11 +62,15 @@ class ObjectStore():
 
         _, page = self.conn.get_container(self.container, **kwargs)
         seed.extend(page)
-        return seed if len(page) < self.RESP_LIMIT else self._get_full_container_list(seed, **kwargs)
+        return seed if len(
+            page) < self.RESP_LIMIT else self._get_full_container_list(seed,
+                                                                       **kwargs)
 
     def folders(self, path):
-        objects_from_store = self._get_full_container_list([], delimiter='/', prefix=path)
-        return [store_object['subdir'] for store_object in objects_from_store if 'subdir' in store_object]
+        objects_from_store = self._get_full_container_list([], delimiter='/',
+                                                           prefix=path)
+        return [store_object['subdir'] for store_object in objects_from_store if
+                'subdir' in store_object]
 
     def files(self, path, file_id):
         file_list = self._get_full_container_list(
@@ -74,7 +81,9 @@ class ObjectStore():
         return file_list
 
     def put_to_objectstore(self, object_name, object_content, content_type):
-        return self.conn.put_object(self.container, object_name, contents=object_content, content_type=content_type)
+        return self.conn.put_object(self.container, object_name,
+                                    contents=object_content,
+                                    content_type=content_type)
 
     def delete_from_objectstore(self, object_name):
         return self.conn.delete_object(self.container, object_name)

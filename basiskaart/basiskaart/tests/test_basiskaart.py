@@ -1,22 +1,24 @@
 import shutil
+import os
 
-import basiskaart_setup
-from basiskaart.basiskaart import basiskaart
+from basiskaart.basiskaart import basiskaart as bk
+from basiskaart_setup import VALUES
 
 
 # Geen testen voor retrieval van files vanaf objectstore. Bestaande code....
 
 def test_kbk10():
-    shutil.rmtree(basiskaart.VALUES['kbk10'][0][1], ignore_errors=True)
+    shutil.rmtree(VALUES['kbk10'][0][1], ignore_errors=True)
+    os.path.realpath(__file__)
     shutil.copytree(
-        basiskaart_setup.SCRIPT_ROOT + '/basiskaart/tests/fixtures/ZeeExt',
-        basiskaart.VALUES['kbk10'][0][1])
-    basiskaart.fill_bk(basiskaart.VALUES['kbk10'][0][1], 'kbk10')
+        os.path.dirname(os.path.realpath(__file__)) + '/fixtures/ZeeExt',
+        VALUES['kbk10'][0][1])
+    bk.fill_bk(VALUES['kbk10'][0][1], 'kbk10')
 
 
 def test_kbk50():
-    shutil.rmtree(basiskaart.VALUES['kbk50'][0][1], ignore_errors=True)
+    shutil.rmtree(VALUES['kbk50'][0][1], ignore_errors=True)
     shutil.copytree(
-        basiskaart_setup.SCRIPT_ROOT + '/basiskaart/tests/fixtures/kbka50_plus',
-        basiskaart.VALUES['kbk50'][0][1])
-    basiskaart.fill_bk(basiskaart.VALUES['kbk50'][0][1], 'kbk50')
+        os.path.dirname(os.path.realpath(__file__)) + '/fixtures/kbka50_plus',
+        VALUES['kbk50'][0][1])
+    bk.fill_bk(VALUES['kbk50'][0][1], 'kbk50')

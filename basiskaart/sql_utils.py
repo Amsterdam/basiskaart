@@ -5,18 +5,18 @@ import subprocess
 import psycopg2
 import psycopg2.extensions
 
-import basiskaart_setup
+from basiskaart_setup import DATABASE
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 
 class SQLRunner(object):
-    def __init__(self, host=basiskaart_setup.BASISKAART_HOST,
-                 port=basiskaart_setup.BASISKAART_PORT,
-                 dbname=basiskaart_setup.BASISKAART_DBNAME,
-                 user=basiskaart_setup.BASISKAART_USER,
-                 password=basiskaart_setup.BASISKAART_PW):
+    def __init__(self, host=DATABASE['HOST'],
+                 port=DATABASE['PORT'],
+                 dbname=DATABASE['NAME'],
+                 user=DATABASE['USER'],
+                 password=DATABASE['PASSWORD']):
         self.host = host
         self.port = port
         self.dbname = dbname
@@ -53,7 +53,7 @@ class SQLRunner(object):
 
     def run_sql_script(self, script_name) -> list:
         """
-        Runs the sql script against the FME database
+        Runs the sql script against the database
         :param script_name:
         :return:
         """
@@ -63,8 +63,10 @@ class SQLRunner(object):
         log.info(
             'Logging into {}:{} db {}.{}'.format(self.host, self.port, dbname,
                                                  schema))
-        return "host={} port={} ACTIVE_SCHEMA={} user={} dbname={} password={}".format(
-            self.host, self.port, schema, self.user, dbname, self.password)
+        return "host={} port={} ACTIVE_SCHEMA={} user={} " \
+               "dbname={} password={}".format(self.host, self.port,
+                                              schema, self.user, dbname,
+                                              self.password)
 
     def import_nwb_shapes(self, file):
         os.putenv('PGCLIENTENCODING', 'UTF8')
@@ -99,18 +101,18 @@ class SQLRunner(object):
 
 def createdb():
     try:
-        sqlconn = SQLRunner(host=basiskaart_setup.BASISKAART_HOST,
-                            dbname=basiskaart_setup.BASISKAART_DBNAME,
-                            user=basiskaart_setup.BASISKAART_USER,
-                            password=basiskaart_setup.BASISKAART_PW,
-                            port=basiskaart_setup.BASISKAART_PORT)
-    except psycopg2.OperationalError as e:
+        SQLRunner(host=DATABASE['HOST'],
+                  port=DATABASE['PORT'],
+                  dbname=DATABASE['NAME'],
+                  user=DATABASE['USER'],
+                  password=DATABASE['PASSWORD'])
+    except psycopg2.OperationalError:
 
-        sqlconn = SQLRunner(host=basiskaart_setup.BASISKAART_HOST,
-                            dbname='postgres',
-                            user=basiskaart_setup.BASISKAART_USER,
-                            password=basiskaart_setup.BASISKAART_PW,
-                            port=basiskaart_setup.BASISKAART_PORT)
+        sqlconn = SQLRunner(host=DATABASE['HOST'],
+                            port=DATABASE['PORT'],
+                            dbname=DATABASE['NAME'],
+                            user=DATABASE['USER'],
+                            password=DATABASE['PASSWORD'])
 
         sqlconn.run_sql('CREATE DATABASE basiskaart;')
         sqlconn.commit()

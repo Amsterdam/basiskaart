@@ -1,5 +1,5 @@
 """
-All commands to create a functioning HR api dataset
+All commands to create a basiskaart
 """
 
 import argparse

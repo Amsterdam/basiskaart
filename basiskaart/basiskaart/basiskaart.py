@@ -7,17 +7,9 @@ from io import BytesIO
 
 from objectstore.objectstore import ObjectStore
 from sql_utils import SQLRunner, createdb
+from basiskaart_setup import VALUES
 
 log = logging.getLogger(__name__)
-
-VALUES = {'kbk10': (('bag_brk', '/tmp/kbk10', 'kbka10', 'Diva', 'kbka10'),),
-          'kbk50': (('bag_brk', '/tmp/kbk50', 'kbka50', 'Diva', 'kbka50'),),
-          'bgt': (
-          ('basiskaart', '/tmp/bgt', 'shapes', 'BGT', 'Export_Shapes'),),
-          'all': (('bag_brk', '/tmp/kbk10', 'kbka10', 'Diva', 'kbka10'),
-                  ('bag_brk', '/tmp/kbk50', 'kbka50', 'Diva', 'kbka50'),
-                  ('basiskaart', '/tmp/bgt', 'shapes', 'BGT', 'Export_Shapes'),)
-          }
 
 
 def fill_bk(tmpdir, schema):
