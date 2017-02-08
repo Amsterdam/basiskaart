@@ -5,7 +5,7 @@ import subprocess
 import psycopg2
 import psycopg2.extensions
 
-from basiskaart_setup import DATABASE
+from .basiskaart_setup import DATABASE
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)

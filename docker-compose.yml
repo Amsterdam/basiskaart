@@ -15,7 +15,8 @@ services:
     environment:
       DATABASE_NAME: basiskaart
       DATABASE_PASSWORD: insecure
-    command: bash -c "/app/tests.sh"
+#    command: bash -c "/app/tests.sh"
+    command: bash
 
   importer:
     build: .
