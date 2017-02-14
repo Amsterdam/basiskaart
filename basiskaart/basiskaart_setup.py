@@ -81,8 +81,6 @@ DATABASE_OPTIONS = {
 
 DATABASE = DATABASE_OPTIONS[get_database_key()]
 
-SCRIPT_ROOT = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), '..', 'basiskaart'))
 TEST_KEYS = os.path.expanduser('~/keys.env')
 
 BASISKAART_OBJECTSTORE_PASSWORD = None

@@ -8,10 +8,10 @@ RUN apt-get update \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
 	&& adduser --system datapunt
 
-COPY basiskaart/ /app/
+COPY . /app/
 WORKDIR /app
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r basiskaart/requirements.txt
 
 RUN chown -R datapunt /app
 USER datapunt
