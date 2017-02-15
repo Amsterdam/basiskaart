@@ -5,7 +5,7 @@ All commands to create a basiskaart
 import argparse
 import logging
 
-import basiskaart.basiskaart as bk
+from basiskaart.basiskaart.basiskaart import process_bk
 
 LOG = logging.getLogger(__name__)
 
@@ -19,4 +19,4 @@ parser.add_argument(
     choices=['all', 'kbk10', 'kbk50', 'bgt'])
 args = parser.parse_args()
 
-bk.process_bk(args.basiskaart)
+process_bk(args.basiskaart)
