@@ -5,7 +5,7 @@ All commands to create a basiskaart
 import argparse
 import logging
 
-from basiskaart.basiskaart.basiskaart import process_bk
+from basiskaart.basiskaart import process_bk
 
 LOG = logging.getLogger(__name__)
 

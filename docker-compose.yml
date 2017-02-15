@@ -15,7 +15,7 @@ services:
     environment:
       DATABASE_NAME: basiskaart
       DATABASE_PASSWORD: insecure
-    command: bash -c "/app/basiskaart/tests.sh"
+    command: bash -c "/app/tests.sh"
 
   importer:
     build: .
@@ -46,8 +46,8 @@ services:
       DB_PORT: 5432
       DB_PASSWORD: insecure
     command: >
-      bash -c "/app/basiskaart/docker-wait.sh \
-              && python /app/basiskaart/import_basiskaart.py --basiskaart=kbk10"
+      bash -c "/app/docker-wait.sh \
+              && python /app/import_basiskaart.py --basiskaart=kbk10"
 
   importer_kbk50:
     build: .
@@ -62,8 +62,8 @@ services:
       DB_PORT: 5432
       DB_PASSWORD: insecure
     command: >
-      bash -c "/app/basiskaart/docker-wait.sh \
-              && python /app/basiskaart/import_basiskaart.py --basiskaart=kbk50"
+      bash -c "/app/docker-wait.sh \
+              && python /app/import_basiskaart.py --basiskaart=kbk50"
 
   importer_bgt:
     build: .
@@ -78,8 +78,8 @@ services:
       DB_PORT: 5432
       DB_PASSWORD: insecure
     command: >
-      bash -c "/app/basiskaart/docker-wait.sh \
-              && python /app/basiskaart/import_basiskaart.py --basiskaart=bgt"
+      bash -c "/app/docker-wait.sh \
+              && python /app/import_basiskaart.py --basiskaart=bgt"
 
   db-backup:
     image: build.datapunt.amsterdam.nl:5000/atlas/postgres

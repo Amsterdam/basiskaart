@@ -1,7 +1,10 @@
 # Created by .ignore support plugin (hsz.mobi)
 ### Python template
 # Byte-compiled / optimized / DLL files
-**/__pycache__
+*/__pycache__
+*/*/__pycache__
+*/*/*/__pycache__
+
 *.py[cod]
 *$py.class
 **/.cache
@@ -43,7 +46,7 @@ htmlcov/
 .tox/
 .coverage
 .coverage.*
-.cache
+
 nosetests.xml
 coverage.xml
 *,cover
