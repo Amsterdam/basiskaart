@@ -1,8 +1,9 @@
-import shutil
 import os
+import shutil
 
-from data_import.basiskaart import fill_bk
-from basiskaart_setup import VALUES
+from basiskaart.basiskaart_setup import VALUES
+from basiskaart.basiskaart import fill_bk
+
 
 # Geen testen voor retrieval van files vanaf objectstore. Bestaande code....
 

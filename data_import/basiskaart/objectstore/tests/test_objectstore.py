@@ -4,7 +4,7 @@ import os.path
 
 import pytest
 
-from objectstore.objectstore import ObjectStore
+from basiskaart.objectstore.objectstore import ObjectStore
 
 
 @pytest.fixture

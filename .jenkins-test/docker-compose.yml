@@ -7,11 +7,11 @@ services:
       POSTGRES_USER: basiskaart
       POSTGRES_DB: basiskaart
 
-    tests:
-      build: .
-      links:
-        - database
-      environment:
-        DATABASE_NAME: basiskaart
-        DATABASE_PASSWORD: insecure
-      command: bash -c "/app/tests.sh"
+  tests:
+    build: ../data_import
+    links:
+      - database
+    environment:
+      DATABASE_NAME: basiskaart
+      DATABASE_PASSWORD: insecure
+    command: bash -c "/app/tests.sh"
