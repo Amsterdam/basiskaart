@@ -8,8 +8,7 @@ RUN apt-get update \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
 	&& adduser --system datapunt
 
-COPY basiskaart /app/
-COPY .jenkins-import /.jenkins-import/
+COPY . /app/
 COPY requirements.txt /app/
 
 WORKDIR /app
