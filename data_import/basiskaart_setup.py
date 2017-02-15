@@ -83,19 +83,19 @@ DATABASE = DATABASE_OPTIONS[get_database_key()]
 
 TEST_KEYS = os.path.expanduser('~/keys.env')
 
-BASISKAART_OBJECTSTORE_PASSWORD = None
+BAG_OBJECTSTORE_PASSWORD = None
 BGT_OBJECTSTORE_PASSWORD = None
 if os.path.exists(TEST_KEYS):
     with open(TEST_KEYS, 'r') as testkeys:
         files = json.load(testkeys)
         if 'bag_brk' in files:
-            BASISKAART_OBJECTSTORE_PASSWORD = files['bag_brk']
+            BAG_OBJECTSTORE_PASSWORD = files['bag_brk']
         if 'basiskaart' in files:
             BGT_OBJECTSTORE_PASSWORD = files['basiskaart']
 
-if not BASISKAART_OBJECTSTORE_PASSWORD:
-    BASISKAART_OBJECTSTORE_PASSWORD = os.getenv(
-        'BASISKAART_OBJECTSTORE_PASSWORD', 'insecure')
+if not BAG_OBJECTSTORE_PASSWORD:
+    BAG_OBJECTSTORE_PASSWORD = os.getenv(
+        'BAG_OBJECTSTORE_PASSWORD', 'insecure')
 if not BGT_OBJECTSTORE_PASSWORD:
     BGT_OBJECTSTORE_PASSWORD = os.getenv('BGT_OBJECTSTORE_PASSWORD', 'insecure')
 

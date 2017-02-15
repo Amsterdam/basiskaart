@@ -1,0 +1,17 @@
+version: '2.1'
+services:
+  database:
+    image: build.datapunt.amsterdam.nl:5000/atlas/postgres
+    environment:
+      POSTGRES_PASSWORD: insecure
+      POSTGRES_USER: basiskaart
+      POSTGRES_DB: basiskaart
+
+    tests:
+      build: .
+      links:
+        - database
+      environment:
+        DATABASE_NAME: basiskaart
+        DATABASE_PASSWORD: insecure
+      command: bash -c "/app/tests.sh"

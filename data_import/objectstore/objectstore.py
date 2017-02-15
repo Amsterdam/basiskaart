@@ -2,7 +2,7 @@ import logging
 
 from swiftclient.client import Connection
 
-from basiskaart_setup import BASISKAART_OBJECTSTORE_PASSWORD
+from basiskaart_setup import BAG_OBJECTSTORE_PASSWORD
 from basiskaart_setup import BGT_OBJECTSTORE_PASSWORD
 
 log = logging.getLogger(__name__)
@@ -29,7 +29,7 @@ class ObjectStore:
     def __init__(self, container, name):
         if name == 'bag_brk':
             OBJECTSTORE['user'] = 'bag_brk'
-            OBJECTSTORE['key'] = BASISKAART_OBJECTSTORE_PASSWORD
+            OBJECTSTORE['key'] = BAG_OBJECTSTORE_PASSWORD
             OBJECTSTORE['os_options'][
                 'tenant_id'] = '4f2f4b6342444c84b3580584587cfd18'
             OBJECTSTORE['tenant_name'] = 'BGE000081_BAG'
