@@ -4,12 +4,13 @@ import os
 import shutil
 import zipfile
 from io import BytesIO
+import basiskaart_setup as bs
 
-from basiskaart.basiskaart_setup import VALUES
-from basiskaart.objectstore.objectstore import ObjectStore
-from basiskaart.sql_utils import SQLRunner, createdb
+from objectstore.objectstore import ObjectStore
+from sql_utils import SQLRunner, createdb
 
 log = logging.getLogger(__name__)
+VALUES=bs.VALUES
 
 
 def fill_bk(tmpdir, schema):

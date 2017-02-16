@@ -2,8 +2,10 @@ import logging
 
 from swiftclient.client import Connection
 
-from basiskaart.basiskaart_setup import BAG_OBJECTSTORE_PASSWORD
-from basiskaart.basiskaart_setup import BGT_OBJECTSTORE_PASSWORD
+import basiskaart_setup as bs
+
+BAG_OBJECTSTORE_PASSWORD = bs.BAG_OBJECTSTORE_PASSWORD
+BGT_OBJECTSTORE_PASSWORD = bs.BGT_OBJECTSTORE_PASSWORD
 
 log = logging.getLogger(__name__)
 

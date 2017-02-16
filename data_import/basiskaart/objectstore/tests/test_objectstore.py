@@ -4,7 +4,7 @@ import os.path
 
 import pytest
 
-from basiskaart.objectstore.objectstore import ObjectStore
+from ..objectstore import ObjectStore
 
 
 @pytest.fixture
@@ -12,7 +12,7 @@ def objectstore():
     return ObjectStore('BAG')
 
 
-@pytest.mark.skip(reason='no tests to objectstore')
+@pytest.mark.skip(reason='no tests to objectstore, copied from other project')
 def test_objects(objectstore):
     # clean up
     stored_objects = objectstore._get_full_container_list([])

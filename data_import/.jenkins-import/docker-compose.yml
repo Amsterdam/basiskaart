@@ -11,13 +11,14 @@ services:
     links:
       - database
     environment:
-      BAG_OBJECTSTORE_PASSWORD: ${BAG_OBJECTSTORE_PASSWORD:-insecure}
-      BGT_OBJECTSTORE_PASSWORD: $(BGT_OBJECTSTORE_PASSWORD:-insecure}
       DB_NAME: basiskaart
       DB_USER: basiskaart
-      DB_HOST: localhost
-      DB_PORT: 5432
       DB_PASSWORD: insecure
+      BAG_OBJECTSTORE_PASSWORD:
+      BGT_OBJECTSTORE_PASSWORD:
+      DATABASE_HOST_OVERRIDE: database
+      DATABASE_PORT_OVERRIDE: 5432
+#      METADATA_URL: "${METADATA_URL}"
     command: >
       bash -c "/app/basiskaart/docker-wait.sh \
               && python /app/basiskaart/import_basiskaart.py"

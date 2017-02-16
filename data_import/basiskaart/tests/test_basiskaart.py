@@ -1,12 +1,12 @@
 import os
 import shutil
 
-from basiskaart.basiskaart_setup import VALUES
-from basiskaart.basiskaart import fill_bk
+import basiskaart_setup as bs
+from basiskaart import fill_bk
 
 
 # Geen testen voor retrieval van files vanaf objectstore. Bestaande code....
-
+VALUES = bs.VALUES
 
 def test_kbk10():
     shutil.rmtree(VALUES['kbk10'][0][1], ignore_errors=True)
