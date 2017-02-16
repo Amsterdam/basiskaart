@@ -25,14 +25,14 @@ def fill_bk(tmpdir, schema):
 
     sql = SQLRunner()
     for schema_proc in VALUES[schema]:
-        work_schema = schema_proc[2]
+        work_schema = schema_proc[5]
         sql.run_sql("DROP SCHEMA IF EXISTS {} CASCADE".format(work_schema))
         sql.run_sql("CREATE SCHEMA {}".format(work_schema))
         sql.import_bk(tmpdir, work_schema)
 
 
 def process_bk(kbk_name):
-    for object_store_name, tmpdir, path, prefix, importnames in VALUES[
+    for object_store_name, tmpdir, path, prefix, importnames, schema in VALUES[
             kbk_name]:
         schema = kbk_name
         get_bk(object_store_name, path, tmpdir, prefix, importnames)
