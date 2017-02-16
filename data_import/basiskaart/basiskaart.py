@@ -34,7 +34,6 @@ def fill_bk(tmpdir, schema):
 def process_bk(kbk_name):
     for object_store_name, tmpdir, path, prefix, importnames, schema in VALUES[
             kbk_name]:
-        schema = kbk_name
         get_bk(object_store_name, path, tmpdir, prefix, importnames)
         fill_bk(tmpdir, schema)
 
