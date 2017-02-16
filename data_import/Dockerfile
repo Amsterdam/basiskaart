@@ -10,7 +10,7 @@ RUN apt-get update \
 
 COPY . /app/
 COPY requirements.txt /app/
-COPY data_import/.jenkins-import /.jenkins-import/
+COPY .jenkins-import /.jenkins-import/
 
 WORKDIR /app
 
