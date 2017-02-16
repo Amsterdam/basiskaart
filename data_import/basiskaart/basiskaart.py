@@ -26,6 +26,7 @@ def fill_bk(tmpdir, schema):
     sql = SQLRunner()
     for schema_proc in VALUES[schema]:
         work_schema = schema_proc[5]
+        log.info("Clean existing schema {}".format(work_schema))
         sql.run_sql("DROP SCHEMA IF EXISTS {} CASCADE".format(work_schema))
         sql.run_sql("CREATE SCHEMA {}".format(work_schema))
         sql.import_bk(tmpdir, work_schema)
@@ -55,7 +56,7 @@ def get_bk(object_store_name, name, tmpdir, prefix, importnames):
         pass
     store = ObjectStore(prefix, object_store_name)
     files = store.get_store_objects(name)
-    log.info("Download shape files kbk10/kbk50/bgt zip")
+    log.info("Download shape files zip into {}".format(tmpdir))
     for file in files:
         fsplit = os.path.split(file['name'])
         if len(fsplit) == 2 and fsplit[0] == name and fsplit[1].startswith(
