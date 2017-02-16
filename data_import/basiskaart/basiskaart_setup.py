@@ -101,9 +101,9 @@ if not BGT_OBJECTSTORE_PASSWORD:
 
 DEBUG = os.getenv('DEBUG', False) == '1'
 
-KBK10 = ('bag_brk', '/tmp/kbk10', 'kbka10', 'Diva', 'kbka10')
-KBK50 = ('bag_brk', '/tmp/kbk50', 'kbka50', 'Diva', 'kbka50')
-BGT = ('basiskaart', '/tmp/bgt', 'shapes', 'BGT', 'Export_Shapes')
+KBK10 = ('bag_brk', '/tmp/kbk10', 'kbka10', 'Diva', 'kbka10', 'kbk10')
+KBK50 = ('bag_brk', '/tmp/kbk50', 'kbka50', 'Diva', 'kbka50', 'kbk50')
+BGT = ('basiskaart', '/tmp/bgt', 'shapes', 'BGT', 'Export_Shapes', 'bgt')
 
 VALUES = {'kbk10': (KBK10,),
           'kbk50': (KBK50,),
