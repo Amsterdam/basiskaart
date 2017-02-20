@@ -21,7 +21,7 @@ services:
 #      METADATA_URL: "${METADATA_URL}"
     command: >
       bash -c "/app/basiskaart/docker-wait.sh \
-              && python /app/basiskaart/import_basiskaart.py"
+              && python3 /app/basiskaart/import_basiskaart.py"
 
   db-backup:
     image: build.datapunt.amsterdam.nl:5000/atlas/postgres
