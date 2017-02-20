@@ -1,4 +1,3 @@
 #!/usr/bin/env bash
-
-cd basiskaart
+cd /app/basiskaart
 py.test
