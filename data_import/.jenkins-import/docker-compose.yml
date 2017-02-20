@@ -34,9 +34,6 @@ services:
               && chmod 600 ~/.pgpass \
               && pg_dump --clean \
                           -Fc \
-                          -n kbk10 \
-                          -n kbk50 \
-                          -n bgt \
                           -U basiskaart \
                           -h database -p 5432 \
                           basiskaart > /tmp/backups/database.dump"
