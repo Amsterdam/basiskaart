@@ -24,12 +24,10 @@ def fill_bk(tmpdir, schema):
     os.makedirs(tmpdir, exist_ok=True)
 
     sql = SQLRunner()
-    for schema_proc in VALUES[schema]:
-        work_schema = schema_proc[5]
-        log.info("Clean existing schema {}".format(work_schema))
-        sql.run_sql("DROP SCHEMA IF EXISTS {} CASCADE".format(work_schema))
-        sql.run_sql("CREATE SCHEMA {}".format(work_schema))
-        sql.import_bk(tmpdir, work_schema)
+    log.info("Clean existing schema {}".format(schema))
+    sql.run_sql("DROP SCHEMA IF EXISTS {} CASCADE".format(schema))
+    sql.run_sql("CREATE SCHEMA {}".format(schema))
+    sql.import_bk(tmpdir, schema)
 
 
 def process_bk(kbk_name):
@@ -54,15 +52,17 @@ def get_bk(object_store_name, name, tmpdir, prefix, importnames):
         shutil.rmtree(tmpdir)
     except FileNotFoundError:
         pass
+    else:
+        log.info("Removed {}".format(tmpdir))
     store = ObjectStore(prefix, object_store_name)
     files = store.get_store_objects(name)
-    log.info("Download shape files zip into {}".format(tmpdir))
+    log.info("Download shape files zip into '{}'".format(tmpdir))
     for file in files:
         fsplit = os.path.split(file['name'])
         if len(fsplit) == 2 and fsplit[0] == name and fsplit[1].startswith(
                 importnames):
             content = BytesIO(store.get_store_object(file['name']))
             inzip = zipfile.ZipFile(content)
-            log.info("Extract to temp directory %s", tmpdir)
+            log.info("Extract %s to temp directory %s", file['name'], tmpdir)
             inzip.extractall(tmpdir)
     return
