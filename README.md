@@ -1,5 +1,5 @@
 # atlas_kbk
-Atlas import docker for Kleinschalige Basiskaart 10 and Kleinschalige Basiskaart 50
+Atlas import docker for Kleinschalige Basiskaart 10, Kleinschalige Basiskaart 50 en BGT
 
 # Straatnamen
 
