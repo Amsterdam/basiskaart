@@ -1,9 +1,13 @@
-FROM amsterdam/docker_python:latest
+FROM build.datapunt.amsterdam.nl:5000/atlas/python:latest
 MAINTAINER datapunt.ois@amsterdam.nl
+
+COPY apt/*.list /etc/apt/sources.list.d/
 
 RUN apt-get update \
 	&& apt-get install -y \
-		gdal-bin postgresql-client \
+	    gdal-bin/testing \
+		libgeos-dev \
+		postgresql-client \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
 	&& adduser --system datapunt

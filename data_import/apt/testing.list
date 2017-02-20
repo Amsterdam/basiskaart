@@ -1,0 +1,6 @@
+deb     http://mirror.nl.leaseweb.net/debian/ testing main contrib non-free
+deb-src http://mirror.nl.leaseweb.net/debian/ testing main contrib non-free
+deb     http://ftp.nl.debian.org/debian/    testing main contrib non-free
+deb-src http://ftp.nl.debian.org/debian/    testing main contrib non-free
+deb     http://ftp.nluug.nl/pub/os/Linux/distr/debian/    testing main contrib non-free
+deb-src http://ftp.nluug.nl/pub/os/Linux/distr/debian/    testing main contrib non-free

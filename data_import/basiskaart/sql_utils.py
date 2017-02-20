@@ -84,10 +84,12 @@ class SQLRunner(object):
     def import_bk(self, path_to_shp, schema):
         os.putenv('PGCLIENTENCODING', 'UTF8')
 
+        log.info('import schema {} in {}'.format(path_to_shp, schema))
         for root, dirs, files in os.walk(path_to_shp, topdown=False):
+            log.info('Processing {} with dirs {}'.format(root, dirs))
             for file in files:
                 if os.path.splitext(file)[1] == '.shp':
-                    log.info('Importing {}'.format(file))
+                    log.info('Importing {}'.format(root + '/' + file))
                     subprocess.call(
                         'ogr2ogr -nlt PROMOTE_TO_MULTI -progress -skipfailures '
                         '-overwrite -f "PostgreSQL" '
