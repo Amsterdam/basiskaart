@@ -18,8 +18,8 @@ services:
       DB_NAME: basiskaart
       DB_USER: basiskaart
       DB_PASSWORD: insecure
-      BAG_OBJECTSTORE_PASSWORD: nsi:ott1Y^d5zSbc
-      BGT_OBJECTSTORE_PASSWORD: KNF8-M-_d^6Y1B6s
+      BAG_OBJECTSTORE_PASSWORD: insecure
+      BGT_OBJECTSTORE_PASSWORD: insecure
     command: >
       bash -c "/app/basiskaart/docker-wait.sh \
               && python /app/basiskaart/import_basiskaart.py"
