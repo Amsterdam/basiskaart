@@ -9,6 +9,7 @@ RUN apt-get update \
         libpq-dev \
         gdal-bin \
 		postgresql-client \
+		netcat \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
 	&& adduser --system datapunt

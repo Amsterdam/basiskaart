@@ -22,4 +22,4 @@ services:
       BGT_OBJECTSTORE_PASSWORD: insecure
     command: >
       bash -c "/app/basiskaart/docker-wait.sh \
-              && python /app/basiskaart/import_basiskaart.py"
+              && python3 /app/basiskaart/import_basiskaart.py"
