@@ -7,6 +7,8 @@ from sql_utils import SQLRunner
 XLS_VIEWDEF = os.path.dirname(
     os.path.realpath(__file__)) + '/fixtures/20170216_wms_kaart_database.xlsx'
 
+sql = SQLRunner()
+
 
 def create_views_based_on_workbook():
     view_definitions = read_workbook()
@@ -48,22 +50,52 @@ def get_min_max_value(view_definitions):
 
 
 def create_view(view_definitions, min_max_values):
-    sql = SQLRunner()
-
-    viewstmt = "CREATE OR REPLACE VIEW {} AS {}"
-    single_select = 'SELECT {} FROM "{}"."{}" WHERE hoogtelig = {}'
 
     for viewname, viewdef in view_definitions.items():
         minvalue = min_max_values[viewname][0]
         maxvalue = min_max_values[viewname][1]
 
-        for hoogte in range(minvalue, maxvalue):
-            selects = []
+        build_view_per_name(viewname, viewdef, minvalue, maxvalue)
 
-            for schema, tabel, vwattr, minval, maxval in viewdef:
-                selects.append(
-                    single_select.format(vwattr, schema, tabel, hoogte))
 
-            real_viewname = viewname.replace('<hoogteligging>',
-                                             str(hoogte).replace('-', '_'))
-            sql.run_sql(viewstmt.format(real_viewname, " UNION ".join(selects)))
+def build_view_per_name(viewname, viewdef, minvalue, maxvalue):
+
+    new_viewdef = []
+    for schema, tabel, vwattr, minval, maxval in viewdef:
+        new_viewdef.append([schema,
+                            tabel,
+                            define_fields(tabel, schema, vwattr),
+                            minval,
+                            maxval])
+
+    create_views(viewname, new_viewdef, minvalue, maxvalue)
+
+
+def create_views(viewname, viewdef, minvalue, maxvalue):
+
+    viewstmt = "CREATE OR REPLACE VIEW {} AS {}"
+    single_select = 'SELECT {} FROM "{}"."{}" WHERE hoogtelig = {}'
+
+    for hoogte in range(minvalue, maxvalue):
+        selects = []
+
+        for schema, tabel, vwattr, minval, maxval in viewdef:
+            selects.append(
+                single_select.format(vwattr, schema, tabel, hoogte))
+
+        real_viewname = viewname.replace('<hoogteligging>',
+                                         str(hoogte).replace('-', '_'))
+        sql.run_sql(viewstmt.format(real_viewname, " UNION ".join(selects)))
+
+
+def define_fields(tabel, schema, vwattr):
+
+    sql_table_name = '"{}"."{}"'.format(schema, tabel)
+    foundcolumns = sql.get_columns_from_table(sql_table_name)
+    required_columns = [field.strip() for field in vwattr.split(',')]
+    columns_not_found = [column for column in required_columns if column not in foundcolumns]
+
+    for not_found in columns_not_found:
+        vwattr = vwattr.replace(not_found, 'NULL as ' + not_found)
+
+    return vwattr

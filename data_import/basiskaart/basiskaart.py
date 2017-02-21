@@ -42,7 +42,7 @@ def get_basiskaart(object_store_name, name, tmpdir, prefix, importnames):
     """
     try:
         shutil.rmtree(tmpdir)
-    except FileNotFoundError:
+    except shutil.FileNotFoundError:
         pass
     else:
         log.info("Removed {}".format(tmpdir))

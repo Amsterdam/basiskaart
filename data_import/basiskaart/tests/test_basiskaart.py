@@ -52,3 +52,15 @@ def test_bgt():
         'tijdreg', 'eindreg', 'lv_pubdat', 'bronhoud', 'inonderzk', 'hoogtelig',
         'bgtstatus', 'plusstatus', 'bgtfysvkn', 'optalud', 'plusfysvkn')
     checktable('bgt."BGT_BTRN_grasland_agrarisch"', checkcolumns)
+
+    checkcolumns = (
+        'ogc_fid', 'geom', 'namespace', 'lokaalid', 'begintijd', 'einddtijd',
+        'tijdreg', 'eindreg', 'lv_pubdat', 'bronhoud', 'inonderzk', 'hoogtelig',
+        'bgtstatus', 'plusstatus', 'bgttype', 'plustype')
+    checktable('bgt."BGT_OWDL_transitie"', checkcolumns)
+
+    checkcolumns = (
+        'ogc_fid', 'geom', 'namespace', 'lokaalid', 'begintijd', 'einddtijd',
+        'tijdreg', 'eindreg', 'lv_pubdat', 'bronhoud', 'inonderzk', 'hoogtelig',
+        'bgtstatus', 'bgttype', 'plusstatus', 'plustype')
+    checktable('bgt."BGT_WDL_transitie"', checkcolumns)

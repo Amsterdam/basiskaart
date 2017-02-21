@@ -24,11 +24,17 @@ parser.add_argument(
     action='store_true',
     default=False,
     help='Do not generate views')
+parser.add_argument(
+    '--viewsonly',
+    action='store_true',
+    default=False,
+    help='Only generrate views')
 args = parser.parse_args()
 
 if __name__ == '__main__':
     LOG.info(" Basiskaart bouw gestart voor %s", args.basiskaart)
-    process_basiskaart(args.basiskaart)
+    if not args.viewsonly:
+        process_basiskaart(args.basiskaart)
 
     if not args.no_views:
         LOG.info(" Views voor basiskaart worden gebouwd")
