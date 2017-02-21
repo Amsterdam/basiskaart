@@ -52,6 +52,11 @@ class SQLRunner(object):
             log.debug("Database script exception: procedures :%s" % str(e))
             raise Exception(e)
 
+    def get_columns_from_table(self, table):
+        dbcur = self.conn.cursor()
+        dbcur.execute("SELECT * FROM {} WHERE 1=0".format(table))
+        return [desc[0] for desc in dbcur.description]
+
     def run_sql_script(self, script_name) -> list:
         """
         Runs the sql script against the database

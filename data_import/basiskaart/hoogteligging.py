@@ -19,7 +19,7 @@ def read_workbook():
         rowvalues = [r.value for r in row]
         schema, tabel, categorie, geotype, viewnm, vwattr, laag, grp, minhoogte, maxhoogte = rowvalues
         if idx >= startvalue:
-            viewname = "{}.{}_{}<hoogteligging>".format(schema.lower(), categorie, geotype)
+            viewname = '"{}"."{}_{}<hoogteligging>"'.format(schema.lower(), categorie, geotype)
             if viewname not in view_definitions:
                 view_definitions[viewname] = []
             view_definitions[viewname] += [[schema.lower(), tabel, vwattr, minhoogte, maxhoogte]]
@@ -44,8 +44,8 @@ def get_min_max_value(view_definitions):
 def create_view(view_definitions, min_max_values):
     sql = SQLRunner()
 
-    viewstmt = 'CREATE OR REPLACE VIEW "{}" AS {}'
-    single_select = 'SELECT {} FROM "{}"."{}" WHERE hoogteligging = {}'
+    viewstmt = 'CREATE OR REPLACE VIEW {} AS {}'
+    single_select = 'SELECT {} FROM "{}"."{}" WHERE hoogtelig = {}'
 
     for viewname, viewdef in view_definitions.items():
         minvalue = min_max_values[viewname][0]
