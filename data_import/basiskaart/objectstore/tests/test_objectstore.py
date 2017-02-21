@@ -4,7 +4,7 @@ import os.path
 
 import pytest
 
-from ..objectstore import ObjectStore
+from objectstore.objectstore import ObjectStore
 
 
 @pytest.fixture
