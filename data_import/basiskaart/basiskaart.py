@@ -6,14 +6,14 @@ import zipfile
 from io import BytesIO
 import basiskaart_setup as bs
 
-from objectstore.objectstore import ObjectStore
-from sql_utils import SQLRunner, createdb
+from basiskaart.objectstore.objectstore import ObjectStore
+from basiskaart.sql_utils import SQLRunner, createdb
 
 log = logging.getLogger(__name__)
 VALUES=bs.VALUES
 
 
-def fill_bk(tmpdir, schema):
+def fill_basiskaart(tmpdir, schema):
     """
     Importeer 'basiskaart files' in Postgres
     schema 'basiskaart' mbv ogr2ogr
@@ -27,17 +27,16 @@ def fill_bk(tmpdir, schema):
     log.info("Clean existing schema {}".format(schema))
     sql.run_sql("DROP SCHEMA IF EXISTS {} CASCADE".format(schema))
     sql.run_sql("CREATE SCHEMA {}".format(schema))
-    sql.import_bk(tmpdir, schema)
+    sql.import_basiskaart(tmpdir, schema)
 
 
-def process_bk(kbk_name):
-    for object_store_name, tmpdir, path, prefix, importnames, schema in VALUES[
-            kbk_name]:
-        get_bk(object_store_name, path, tmpdir, prefix, importnames)
-        fill_bk(tmpdir, schema)
+def process_basiskaart(kbk_name):
+    for object_store_name, tmpdir, path, prefix, importnames, schema in VALUES[kbk_name]:
+        get_basiskaart(object_store_name, path, tmpdir, prefix, importnames)
+        fill_basiskaart(tmpdir, schema)
 
 
-def get_bk(object_store_name, name, tmpdir, prefix, importnames):
+def get_basiskaart(object_store_name, name, tmpdir, prefix, importnames):
     """
     Get zip from either local disk (for testing purposes) or from Objectstore
 
@@ -54,9 +53,11 @@ def get_bk(object_store_name, name, tmpdir, prefix, importnames):
         pass
     else:
         log.info("Removed {}".format(tmpdir))
+
     store = ObjectStore(prefix, object_store_name)
     files = store.get_store_objects(name)
     log.info("Download shape files zip into '{}'".format(tmpdir))
+
     for file in files:
         fsplit = os.path.split(file['name'])
         if len(fsplit) == 2 and fsplit[0] == name and fsplit[1].startswith(
@@ -65,4 +66,3 @@ def get_bk(object_store_name, name, tmpdir, prefix, importnames):
             inzip = zipfile.ZipFile(content)
             log.info("Extract %s to temp directory %s", file['name'], tmpdir)
             inzip.extractall(tmpdir)
-    return

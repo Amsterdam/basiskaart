@@ -18,7 +18,6 @@ services:
       BGT_OBJECTSTORE_PASSWORD:
       DATABASE_HOST_OVERRIDE: database
       DATABASE_PORT_OVERRIDE: 5432
-#      METADATA_URL: "${METADATA_URL}"
     command: >
       bash -c "/app/basiskaart/docker-wait.sh \
               && python3 /app/basiskaart/import_basiskaart.py"
