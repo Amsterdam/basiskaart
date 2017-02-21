@@ -1,8 +1,11 @@
+import os
+
 from openpyxl import load_workbook
 
 from sql_utils import SQLRunner
 
-XLS_VIEWDEF = '../fixtures/20170216_wms_kaart_database.xlsx'
+XLS_VIEWDEF = os.path.dirname(
+    os.path.realpath(__file__)) + '/fixtures/20170216_wms_kaart_database.xlsx'
 
 
 def create_views_based_on_workbook():
@@ -17,12 +20,15 @@ def read_workbook():
     startvalue = 1
     for idx, row in enumerate(wb['Blad1'].rows):
         rowvalues = [r.value for r in row]
-        schema, tabel, categorie, geotype, viewnm, vwattr, laag, grp, minhoogte, maxhoogte = rowvalues
+        schema, tabel, categorie, geotype, viewnm, vwattr, laag, grp, \
+            minhoogte, maxhoogte = rowvalues
         if idx >= startvalue:
-            viewname = '"{}"."{}_{}<hoogteligging>"'.format(schema.lower(), categorie, geotype)
+            viewname = '"{}"."{}_{}<hoogteligging>"'.format(schema.lower(),
+                                                            categorie, geotype)
             if viewname not in view_definitions:
                 view_definitions[viewname] = []
-            view_definitions[viewname] += [[schema.lower(), tabel, vwattr, minhoogte, maxhoogte]]
+            view_definitions[viewname] += [
+                [schema.lower(), tabel, vwattr, minhoogte, maxhoogte]]
     return view_definitions
 
 
@@ -44,7 +50,7 @@ def get_min_max_value(view_definitions):
 def create_view(view_definitions, min_max_values):
     sql = SQLRunner()
 
-    viewstmt = 'CREATE OR REPLACE VIEW {} AS {}'
+    viewstmt = "CREATE OR REPLACE VIEW {} AS {}"
     single_select = 'SELECT {} FROM "{}"."{}" WHERE hoogtelig = {}'
 
     for viewname, viewdef in view_definitions.items():
@@ -55,7 +61,9 @@ def create_view(view_definitions, min_max_values):
             selects = []
 
             for schema, tabel, vwattr, minval, maxval in viewdef:
-                selects.append(single_select.format(vwattr, schema, tabel, hoogte))
+                selects.append(
+                    single_select.format(vwattr, schema, tabel, hoogte))
 
-            real_viewname = viewname.replace('<hoogteligging>', str(hoogte).replace('-','_'))
+            real_viewname = viewname.replace('<hoogteligging>',
+                                             str(hoogte).replace('-', '_'))
             sql.run_sql(viewstmt.format(real_viewname, " UNION ".join(selects)))

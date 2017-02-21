@@ -1,7 +1,7 @@
 import os
 import shutil
 
-from basiskaart import fill_basiskaart
+from basiskaart.basiskaart import fill_basiskaart
 import sql_utils
 from basiskaart_setup import VALUES
 
@@ -45,7 +45,7 @@ def test_bgt():
     shutil.copytree(
         os.path.dirname(os.path.realpath(__file__)) + '/fixtures/bgt',
         VALUES['bgt'][0][1])
-    fill_bk(VALUES['bgt'][0][1], 'bgt')
+    fill_basiskaart(VALUES['bgt'][0][1], 'bgt')
 
     checkcolumns = (
         'ogc_fid', 'geom', 'namespace', 'lokaalid', 'begintijd', 'einddtijd',

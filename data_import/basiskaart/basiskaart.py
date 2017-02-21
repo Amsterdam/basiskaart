@@ -4,13 +4,12 @@ import os
 import shutil
 import zipfile
 from io import BytesIO
-import basiskaart_setup as bs
 
+from basiskaart_setup import VALUES
 from objectstore.objectstore import ObjectStore
 from sql_utils import SQLRunner, createdb
 
 log = logging.getLogger(__name__)
-VALUES=bs.VALUES
 
 
 def fill_basiskaart(tmpdir, schema):
@@ -28,12 +27,6 @@ def fill_basiskaart(tmpdir, schema):
     sql.run_sql("DROP SCHEMA IF EXISTS {} CASCADE".format(schema))
     sql.run_sql("CREATE SCHEMA {}".format(schema))
     sql.import_basiskaart(tmpdir, schema)
-
-
-def process_basiskaart(kbk_name):
-    for object_store_name, tmpdir, path, prefix, importnames, schema in VALUES[kbk_name]:
-        get_basiskaart(object_store_name, path, tmpdir, prefix, importnames)
-        fill_basiskaart(tmpdir, schema)
 
 
 def get_basiskaart(object_store_name, name, tmpdir, prefix, importnames):
@@ -66,3 +59,10 @@ def get_basiskaart(object_store_name, name, tmpdir, prefix, importnames):
             inzip = zipfile.ZipFile(content)
             log.info("Extract %s to temp directory %s", file['name'], tmpdir)
             inzip.extractall(tmpdir)
+
+
+def process_basiskaart(kbk_name):
+    for object_store_name, tmpdir, path, prefix, importnames, schema \
+            in VALUES[kbk_name]:
+        get_basiskaart(object_store_name, path, tmpdir, prefix, importnames)
+        fill_basiskaart(tmpdir, schema)

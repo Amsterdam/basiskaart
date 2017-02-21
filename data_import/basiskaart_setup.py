@@ -1,6 +1,6 @@
 import json
-import re
 import os.path
+import re
 
 
 def get_docker_host():
@@ -78,7 +78,6 @@ DATABASE_OPTIONS = {
     },
 }
 
-
 DATABASE = DATABASE_OPTIONS[get_database_key()]
 
 TEST_KEYS = os.path.expanduser('~/keys.env')
@@ -106,7 +105,7 @@ KBK50 = ('bag_brk', '/tmp/kbk50', 'kbka50', 'Diva', 'kbka50', 'kbk50')
 BGT = ('basiskaart', '/tmp/bgt', 'shapes', 'BGT', 'Export_Shapes', 'bgt')
 
 VALUES = {'kbk10': (KBK10,),
-  'kbk50': (KBK50,),
-  'bgt': (BGT,),
-  'all': (KBK10, KBK50, BGT)
-}
+          'kbk50': (KBK50,),
+          'bgt': (BGT,),
+          'all': (KBK10, KBK50, BGT)
+          }

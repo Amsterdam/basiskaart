@@ -14,4 +14,6 @@ services:
     environment:
       DATABASE_NAME: basiskaart
       DATABASE_PASSWORD: insecure
-    command: bash -c "/app/basiskaart/tests.sh"
+    command: >
+      bash -c "/app/docker-wait.sh \
+              && pytest"

@@ -8,7 +8,7 @@
 
 *.py[cod]
 *$py.class
-basiskaart/objectstore/tests/.cache
+objectstore/tests/.cache
 
 # C extensions
 *.so
