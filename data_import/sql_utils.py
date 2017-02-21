@@ -74,19 +74,7 @@ class SQLRunner(object):
                                               schema, self.user, dbname,
                                               self.password)
 
-    def import_nwb_shapes(self, file):
-        os.putenv('PGCLIENTENCODING', 'UTF8')
-
-        log.info('Importing {}'.format(file))
-        subprocess.call(
-            'ogr2ogr -progress -skipfailures -overwrite -f "PostgreSQL" '
-            'PG:"{PG}" -gt 655360 {LCO} {CONF} {FNAME}'.format(
-                PG=self.get_ogr2_ogr_login('nwb', 'basiskaart'),
-                LCO='-lco SPATIAL_INDEX=OFF',
-                CONF='--config PG_USE_COPY YES',
-                FNAME=file), shell=True)
-
-    def import_bk(self, path_to_shp, schema):
+    def import_basiskaart(self, path_to_shp, schema):
         os.putenv('PGCLIENTENCODING', 'UTF8')
 
         log.info('import schema {} in {}'.format(path_to_shp, schema))
