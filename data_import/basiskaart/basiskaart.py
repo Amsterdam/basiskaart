@@ -29,7 +29,8 @@ def fill_basiskaart(tmpdir, schema):
     sql.import_basiskaart(tmpdir, schema)
 
 
-def get_basiskaart(object_store_name, name, tmpdir, prefix, importnames):
+def get_basiskaart(object_store_name, name, tmpdir, prefix, importnames,
+                   endswith):
     """
     Get zip from either local disk (for testing purposes) or from Objectstore
 
@@ -38,11 +39,12 @@ def get_basiskaart(object_store_name, name, tmpdir, prefix, importnames):
     :param tmpdir: temporary storage where to extract
     :param prefix: Prefix in objectstore
     :param importnames: First (glob) characters of names of zipfiles
+    :param endswith: Name of the importfile endswith
     :return: None
     """
     try:
         shutil.rmtree(tmpdir)
-    except shutil.FileNotFoundError:
+    except FileNotFoundError:
         pass
     else:
         log.info("Removed {}".format(tmpdir))
@@ -53,8 +55,8 @@ def get_basiskaart(object_store_name, name, tmpdir, prefix, importnames):
 
     for file in files:
         fsplit = os.path.split(file['name'])
-        if len(fsplit) == 2 and fsplit[0] == name and fsplit[1].startswith(
-                importnames):
+        if len(fsplit) == 2 and fsplit[1].startswith(importnames) and \
+                fsplit[1].endswith(endswith):
             content = BytesIO(store.get_store_object(file['name']))
             inzip = zipfile.ZipFile(content)
             log.info("Extract %s to temp directory %s", file['name'], tmpdir)
@@ -62,7 +64,8 @@ def get_basiskaart(object_store_name, name, tmpdir, prefix, importnames):
 
 
 def process_basiskaart(kbk_name):
-    for object_store_name, tmpdir, path, prefix, importnames, schema \
+    for object_store_name, tmpdir, path, prefix, importnames, schema, endswith \
             in VALUES[kbk_name]:
-        get_basiskaart(object_store_name, path, tmpdir, prefix, importnames)
+        get_basiskaart(object_store_name, path, tmpdir, prefix, importnames,
+                       endswith)
         fill_basiskaart(tmpdir, schema)

@@ -57,6 +57,15 @@ class SQLRunner(object):
         dbcur.execute("SELECT * FROM {} WHERE 1=0".format(table))
         return [desc[0] for desc in dbcur.description]
 
+    def table_exists(self, schema, table):
+        query = """SELECT EXISTS( SELECT 1 FROM pg_tables
+                    WHERE schemaname = (%s) AND
+                          tablename = (%s)
+            );"""
+        dbcur = self.conn.cursor()
+        dbcur.execute(query, (schema, table))
+        return dbcur.fetchone()[0]
+
     def run_sql_script(self, script_name) -> list:
         """
         Runs the sql script against the database

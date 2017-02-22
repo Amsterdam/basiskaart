@@ -1,14 +1,15 @@
 import os
 import shutil
 
+import basiskaart.hoogteligging
 import basiskaart_setup
 import sql_utils
 from basiskaart.basiskaart import fill_basiskaart
 from basiskaart.hoogteligging import create_views_based_on_workbook
-import basiskaart.hoogteligging
 
 VIEWPATH = os.path.dirname(os.path.realpath(__file__)) + '/fixtures/views'
-basiskaart.hoogteligging.XLS_VIEWDEF = os.path.join(VIEWPATH, '20170216_wms_kaart_database.xlsx')
+basiskaart.hoogteligging.XLS_VIEWDEF = os.path.join(VIEWPATH,
+                                                    'wms_kaart_database.xlsx')
 VALUES = basiskaart_setup.VALUES
 
 

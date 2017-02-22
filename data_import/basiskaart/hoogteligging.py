@@ -1,11 +1,14 @@
+import logging
 import os
 
 from openpyxl import load_workbook
 
 from sql_utils import SQLRunner
 
+log = logging.getLogger(__name__)
+
 XLS_VIEWDEF = os.path.dirname(
-    os.path.realpath(__file__)) + '/fixtures/20170216_wms_kaart_database.xlsx'
+    os.path.realpath(__file__)) + '/fixtures/wms_kaart_database.xlsx'
 
 sql = SQLRunner()
 
@@ -24,13 +27,18 @@ def read_workbook():
         rowvalues = [r.value for r in row]
         schema, tabel, categorie, geotype, viewnm, vwattr, laag, grp, \
             minhoogte, maxhoogte = rowvalues
+
         if idx >= startvalue:
             viewname = '"{}"."{}_{}<hoogteligging>"'.format(schema.lower(),
                                                             categorie, geotype)
-            if viewname not in view_definitions:
-                view_definitions[viewname] = []
-            view_definitions[viewname] += [
-                [schema.lower(), tabel, vwattr, minhoogte, maxhoogte]]
+            if sql.table_exists(schema.lower(), tabel):
+                if viewname not in view_definitions:
+                    view_definitions[viewname] = []
+                view_definitions[viewname] += [
+                    [schema.lower(), tabel, vwattr, minhoogte, maxhoogte]]
+            else:
+                log.error("Table {} in view {} does not exist".format(tabel,
+                                                                      viewname))
     return view_definitions
 
 
@@ -50,7 +58,6 @@ def get_min_max_value(view_definitions):
 
 
 def create_view(view_definitions, min_max_values):
-
     for viewname, viewdef in view_definitions.items():
         minvalue = min_max_values[viewname][0]
         maxvalue = min_max_values[viewname][1]
@@ -59,7 +66,6 @@ def create_view(view_definitions, min_max_values):
 
 
 def build_view_per_name(viewname, viewdef, minvalue, maxvalue):
-
     new_viewdef = []
     for schema, tabel, vwattr, minval, maxval in viewdef:
         new_viewdef.append([schema,
@@ -72,7 +78,6 @@ def build_view_per_name(viewname, viewdef, minvalue, maxvalue):
 
 
 def create_views(viewname, viewdef, minvalue, maxvalue):
-
     viewstmt = "CREATE OR REPLACE VIEW {} AS {}"
     single_select = 'SELECT {} FROM "{}"."{}" WHERE hoogtelig = {}'
 
@@ -89,11 +94,11 @@ def create_views(viewname, viewdef, minvalue, maxvalue):
 
 
 def define_fields(tabel, schema, vwattr):
-
     sql_table_name = '"{}"."{}"'.format(schema, tabel)
     foundcolumns = sql.get_columns_from_table(sql_table_name)
     required_columns = [field.strip() for field in vwattr.split(',')]
-    columns_not_found = [column for column in required_columns if column not in foundcolumns]
+    columns_not_found = [column for column in required_columns if
+                         column not in foundcolumns]
 
     for not_found in columns_not_found:
         vwattr = vwattr.replace(not_found, 'NULL as ' + not_found)
