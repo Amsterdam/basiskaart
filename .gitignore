@@ -93,3 +93,8 @@ ENV/
 
 # keys
 keys.env
+
+# idea
+.idea
+basiskaart.iml
+backups
