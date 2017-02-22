@@ -17,7 +17,8 @@ Straatnamen aan Top10NL hartlijnen toekennen voor betere visualisatie op de refe
 
 ## 1. Resultaat
 
-Uiteindelijke bestand met hartlijnen (Top10NL) samengevoegd op straatnaam en typeweg.
+Uiteindelijke bestand met hartlijnen (Top10NL) samengevoegd op straatnaam en typeweg en
+views per hoogte met daarin samengevoegde shapes
 
 **Meest belangrijke atributten:**
 
