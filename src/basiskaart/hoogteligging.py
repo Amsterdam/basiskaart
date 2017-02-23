@@ -26,7 +26,7 @@ def read_workbook():
     for idx, row in enumerate(wb['Blad1'].rows):
         rowvalues = [r.value for r in row]
         schema, tabel, categorie, geotype, viewnm, vwattr, laag, grp, \
-            minhoogte, maxhoogte = rowvalues
+        minhoogte, maxhoogte = rowvalues
 
         if idx >= startvalue:
             viewname = '"{}"."{}_{}<hoogteligging>"'.format(schema.lower(),
@@ -37,8 +37,8 @@ def read_workbook():
                 view_definitions[viewname] += [
                     [schema.lower(), tabel, vwattr, minhoogte, maxhoogte]]
             else:
-                log.error("Table {} in view {} does not exist".format(tabel,
-                                                                      viewname))
+                log.warning("Table {} in view {} does not exist, processing continues".format(tabel,
+                                                                                            viewname))
     return view_definitions
 
 
@@ -102,5 +102,7 @@ def define_fields(tabel, schema, vwattr):
 
     for not_found in columns_not_found:
         vwattr = vwattr.replace(not_found, 'NULL as ' + not_found)
+        log.warning("Table {} column {} does not exist, processing continues".format(tabel,
+                                                                                   not_found))
 
     return vwattr
