@@ -15,8 +15,7 @@ sql = SQLRunner()
 
 def create_views_based_on_workbook():
     view_definitions = read_workbook()
-    min_max_values = get_min_max_value(view_definitions)
-    create_view(view_definitions, min_max_values)
+    create_view(view_definitions)
 
 
 def read_workbook():
@@ -42,26 +41,10 @@ def read_workbook():
     return view_definitions
 
 
-def get_min_max_value(view_definitions):
-    min_max_values = {}
+def create_view(view_definitions):
+
     for viewname, viewdef in view_definitions.items():
-        for viewrow in viewdef:
-            minvalue = viewrow[3]
-            maxvalue = viewrow[4]
-            if viewname not in min_max_values:
-                min_max_values[viewname] = [0, 0]
-            if min_max_values[viewname][0] > minvalue:
-                min_max_values[viewname][0] = minvalue
-            if min_max_values[viewname][1] < maxvalue:
-                min_max_values[viewname][1] = maxvalue
-    return min_max_values
-
-
-def create_view(view_definitions, min_max_values):
-    for viewname, viewdef in view_definitions.items():
-        minvalue = min_max_values[viewname][0]
-        maxvalue = min_max_values[viewname][1]
-
+        minvalue, maxvalue = high_lowvalue(viewdef)
         build_view_per_name(viewname, viewdef, minvalue, maxvalue)
 
 
@@ -75,6 +58,16 @@ def build_view_per_name(viewname, viewdef, minvalue, maxvalue):
                             maxval])
 
     create_views(viewname, new_viewdef, minvalue, maxvalue)
+
+
+def high_lowvalue(viewdef):
+    selects = []
+    single_select = 'SELECT hoogtelig FROM "{}"."{}"'
+    for schema, tabel, vwattr, minval, maxval in viewdef:
+        selects.append(single_select.format(schema, tabel))
+    unionselect = ' UNION '.join(selects)
+    result = sql.run_sql('SELECT min(hoogtelig), max(hoogtelig) from ({}) as subunion'.format(unionselect))
+    return result[0][0], result[0][1]
 
 
 def create_views(viewname, viewdef, minvalue, maxvalue):
