@@ -7,8 +7,7 @@ services:
       POSTGRES_USER: basiskaart
 
   importer:
-#    image: build.datapunt.amsterdam.nl:5000/datapunt/basiskaart:${ENVIRONMENT}
-    build: ../..
+    image: build.datapunt.amsterdam.nl:5000/datapunt/basiskaart:${ENVIRONMENT}
     links:
       - database
     environment:
