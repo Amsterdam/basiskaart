@@ -33,7 +33,7 @@ node {
 
     stage("Build acceptance image") {
         tryStep "build", {
-            def image = docker.build("build.datapunt.amsterdam.nl:5000/datapunt/basiskaart:${env.BUILD_NUMBER}", "data_import")
+            def image = docker.build("build.datapunt.amsterdam.nl:5000/datapunt/basiskaart:${env.BUILD_NUMBER}", "src")
             image.push()
             image.push("acceptance")
         }
