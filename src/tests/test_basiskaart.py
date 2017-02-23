@@ -1,9 +1,9 @@
 import os
 import shutil
 
+from sql_utils import sql_utils
 from basiskaart.basiskaart import fill_basiskaart
-import sql_utils
-from basiskaart_setup import VALUES
+from basiskaart.basiskaart_setup import VALUES
 
 
 # Geen testen voor retrieval van files vanaf objectstore. Bestaande code....

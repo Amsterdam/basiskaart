@@ -2,8 +2,8 @@ import os
 import shutil
 
 import basiskaart.hoogteligging
-import basiskaart_setup
-import sql_utils
+from sql_utils import sql_utils
+from basiskaart import basiskaart_setup
 from basiskaart.basiskaart import fill_basiskaart
 from basiskaart.hoogteligging import create_views_based_on_workbook
 

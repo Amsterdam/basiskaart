@@ -5,9 +5,10 @@ import shutil
 import zipfile
 from io import BytesIO
 
-from basiskaart_setup import VALUES
 from objectstore.objectstore import ObjectStore
-from sql_utils import SQLRunner, createdb
+
+from basiskaart.basiskaart_setup import VALUES
+from sql_utils.sql_utils import SQLRunner, createdb
 
 log = logging.getLogger(__name__)
 

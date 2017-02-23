@@ -9,7 +9,7 @@ from objectstore.objectstore import ObjectStore
 
 @pytest.fixture
 def objectstore():
-    return ObjectStore('BAG')
+    return ObjectStore('BAG', 'basiskaart')
 
 
 @pytest.mark.skip(reason='no tests to objectstore, copied from other project')

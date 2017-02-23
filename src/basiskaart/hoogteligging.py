@@ -3,7 +3,7 @@ import os
 
 from openpyxl import load_workbook
 
-from sql_utils import SQLRunner
+from sql_utils.sql_utils import SQLRunner
 
 log = logging.getLogger(__name__)
 

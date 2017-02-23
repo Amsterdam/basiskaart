@@ -14,13 +14,9 @@ RUN apt-get update \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
 	&& adduser --system datapunt
 
-COPY . /app/
-COPY requirements.txt /app/
-COPY .jenkins-import /.jenkins-import/
-
 WORKDIR /app
 
-RUN pip3 install --no-cache-dir -r requirements.txt
+COPY . /app/
 
-RUN chown -R datapunt /app
+RUN pip3 install --no-cache-dir -r requirements.txt
 USER datapunt
