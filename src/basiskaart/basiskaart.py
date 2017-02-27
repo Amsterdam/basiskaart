@@ -1,4 +1,5 @@
-# packages
+# -*- coding: utf-8 -*-
+
 import logging
 import os
 import shutil
@@ -11,6 +12,7 @@ from basiskaart.basiskaart_setup import VALUES
 from sql_utils.sql_utils import SQLRunner, createdb
 
 log = logging.getLogger(__name__)
+sql = SQLRunner()
 
 
 def fill_basiskaart(tmpdir, schema):
@@ -23,11 +25,59 @@ def fill_basiskaart(tmpdir, schema):
     createdb()
     os.makedirs(tmpdir, exist_ok=True)
 
-    sql = SQLRunner()
     log.info("Clean existing schema {}".format(schema))
     sql.run_sql("DROP SCHEMA IF EXISTS {} CASCADE".format(schema))
     sql.run_sql("CREATE SCHEMA {}".format(schema))
     sql.import_basiskaart(tmpdir, schema)
+    if schema == 'bgt':
+        renamefields()
+
+
+def renamefields():
+    fieldmapping = {
+                    'bagbolgst':    'id_bagvbolaagste_huisnummer',
+                    'bagid':	    'BAG_identificatie',
+                    'bagoprid':     'identificatieBAGOPR',
+                    'bagpndid':     'identificatieBAGPND',
+                    'bagvbohgst':   'identificatieBAGVBOHoogsteHuisnummer',
+                    'bagvbolgst':   'identificatieBAGVBOLaagsteHuisnummer',
+                    'begintijd':    'objectbegintijd',
+                    'bgtfunctie':   'bgt_functie',
+                    'bgtfysvkn':    'bgt_fysiekvoorkomen',
+                    'bgtnagid':     'bgt_nummeraanduidingreeks_id',
+                    'bgtorlid':     'bgt_openbareruimtelabel_id',
+                    'bgtpndid':     'bgt_pand_id',
+                    'bgtstatus':    'bgt_status',
+                    'bgttype':      'bgt_type',
+                    'bij_object':   'hoortbij',
+                    'bronhoud':     'bronhouder',
+                    'eindreg':      'eindregistratie',
+                    'eindtijd':     'objecteindtijd',
+                    'einddtijd':    'objecteindtijd',
+                    'geom':         'geometrie',
+                    'hm_aand':      'hectometeraanduiding',
+                    'hoogtelig':    'relatievehoogteligging',
+                    'hoortbij':     'hoortbijtypeoverbrugging',
+                    'inonderzk':    'inonderzoek',
+                    'isbeweegb':    'overbruggingisbeweegbaar',
+                    'labeltekst':   'label_tekst',
+                    'lokaalid':     'identificatie_lokaalid',
+                    'lv_pubdat':    'lv_publicatiedatum',
+                    'namespace':    'identificatie_namespace',
+                    'oprtype':      'openbareruimtetype',
+                    'plusfunct':    'plus_functie',
+                    'plusfysvkn':   'plus_fysiekvoorkomen',
+                    'plusstatus':   'plus_status',
+                    'plustype':     'plus_type',
+                    'tijdreg':      'tijdstipregistratie',
+                    }
+    tables_in_schema = sql.gettables_in_schema('bgt')
+    for t in tables_in_schema:
+        table = '"bgt"."{}"'.format(t[2])
+        columns = sql.get_columns_from_table(table)
+        renames = [(col, fieldmapping[col]) for col in columns if col in fieldmapping]
+        for fromcol, tocol in renames:
+            sql.rename_column(table, fromcol, tocol)
 
 
 def get_basiskaart(object_store_name, name, tmpdir, prefix, importnames,

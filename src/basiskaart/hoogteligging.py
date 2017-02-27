@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import logging
 import os
 
@@ -24,8 +25,7 @@ def read_workbook():
     startvalue = 1
     for idx, row in enumerate(wb['Blad1'].rows):
         rowvalues = [r.value for r in row]
-        schema, tabel, categorie, geotype, viewnm, vwattr, laag, grp, \
-        minhoogte, maxhoogte = rowvalues
+        schema, tabel, categorie, geotype, viewnm, vwattr, laag, grp, minhoogte, maxhoogte = rowvalues
 
         if idx >= startvalue:
             viewname = '"{}"."{}_{}<hoogteligging>"'.format(schema.lower(),
@@ -36,13 +36,15 @@ def read_workbook():
                 view_definitions[viewname] += [
                     [schema.lower(), tabel, vwattr, minhoogte, maxhoogte]]
             else:
-                log.warning("Table {} in view {} does not exist, processing continues".format(tabel,
-                                                                                            viewname))
+                log.warning(
+                    "Table {} in view {} does not exist, "
+                    "processing continues".format(
+                        tabel,
+                        viewname))
     return view_definitions
 
 
 def create_view(view_definitions):
-
     for viewname, viewdef in view_definitions.items():
         minvalue, maxvalue = high_lowvalue(viewdef)
         build_view_per_name(viewname, viewdef, minvalue, maxvalue)
@@ -62,17 +64,21 @@ def build_view_per_name(viewname, viewdef, minvalue, maxvalue):
 
 def high_lowvalue(viewdef):
     selects = []
-    single_select = 'SELECT hoogtelig FROM "{}"."{}"'
+    single_select = 'SELECT relatievehoogteligging FROM "{}"."{}"'
     for schema, tabel, vwattr, minval, maxval in viewdef:
         selects.append(single_select.format(schema, tabel))
     unionselect = ' UNION '.join(selects)
-    result = sql.run_sql('SELECT min(hoogtelig), max(hoogtelig) from ({}) as subunion'.format(unionselect))
+    result = sql.run_sql(
+        'select min(relatievehoogteligging), '
+        'max(relatievehoogteligging) from ({}) '
+        'as subunion'.format(
+            unionselect))
     return result[0][0], result[0][1]
 
 
 def create_views(viewname, viewdef, minvalue, maxvalue):
     viewstmt = "CREATE OR REPLACE VIEW {} AS {}"
-    single_select = 'SELECT {} FROM "{}"."{}" WHERE hoogtelig = {}'
+    single_select = 'SELECT {} FROM "{}"."{}" WHERE relatievehoogteligging = {}'
 
     for hoogte in range(minvalue, maxvalue):
         selects = []
@@ -90,12 +96,18 @@ def define_fields(tabel, schema, vwattr):
     sql_table_name = '"{}"."{}"'.format(schema, tabel)
     foundcolumns = sql.get_columns_from_table(sql_table_name)
     required_columns = [field.strip() for field in vwattr.split(',')]
-    columns_not_found = [column for column in required_columns if
+    columns_not_found = ['"' + column + '"' for column in required_columns if
                          column not in foundcolumns]
+    required_columns = ['"' + column + '"' for column in required_columns]
 
     for not_found in columns_not_found:
-        vwattr = vwattr.replace(not_found, 'NULL as ' + not_found)
-        log.warning("Table {} column {} does not exist, processing continues".format(tabel,
-                                                                                   not_found))
+        idx = required_columns.index(not_found)
+        required_columns[idx] = 'NULL as ' + not_found
+        log.warning(
+            "Table {} column {} does not exist, processing continues".format(
+                tabel,
+                not_found))
+
+    vwattr = ', '.join(required_columns)
 
     return vwattr

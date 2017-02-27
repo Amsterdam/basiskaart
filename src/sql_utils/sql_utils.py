@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import logging
 import os
 import subprocess
@@ -53,10 +55,22 @@ class SQLRunner(object):
             log.debug("Database script exception: procedures :%s" % str(e))
             raise Exception(e)
 
+    def rename_column(self, table, column_from, column_to):
+        query = 'ALTER TABLE {} RENAME COLUMN "{}" TO "{}"'.format(table, column_from, column_to)
+        dbcur = self.conn.cursor()
+        dbcur.execute(query)
+
     def get_columns_from_table(self, table):
         dbcur = self.conn.cursor()
         dbcur.execute("SELECT * FROM {} WHERE 1=0".format(table))
         return [desc[0] for desc in dbcur.description]
+
+    def gettables_in_schema(self, schema):
+        query = """ SELECT * FROM information_schema.tables
+                    WHERE table_schema = %s"""
+        dbcur = self.conn.cursor()
+        dbcur.execute(query, (schema, ))
+        return dbcur.fetchall()
 
     def table_exists(self, schema, table):
         query = """SELECT EXISTS( SELECT 1 FROM pg_tables
