@@ -8,5 +8,7 @@ KBK10 en KBK50 worden handmatig in de directory gezet. Het script zoekt in de ma
 
 ## 2. Resultaat
 
-Er worden onder database "basiskaart" 3 schema's gemaakt: kbk10, kbk50 en bgt. Alle shapes die gevonden zijn in de zips zijn één op één vertaald naar tabellen in de verschillende schema's.
+Er worden onder database "basiskaart" 3 schema's gemaakt: kbk10, kbk50 en bgt. Alle shapes die gevonden zijn in de zips zijn één op één vertaald naar tabellen in de verschillende schema's. Daarnaast zijn de kolommen hernoemd naar de originele waarden, omdat ze afgekort zijn in het proces 
+
 Voor BGT worden daarnaast views gemaakt die zijn gebaseerd op een spreadsheet zoals terug te vinden in basiskaart/fixtures. Het script tolereert ontbrekende tabellen en kolommen in de shape tabellen.
+
