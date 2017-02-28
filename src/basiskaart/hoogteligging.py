@@ -56,8 +56,8 @@ def build_view_per_name(viewname, viewdef, minvalue, maxvalue):
         new_viewdef.append([schema,
                             tabel,
                             define_fields(tabel, schema, vwattr),
-                            minval,
-                            maxval])
+                            minvalue,
+                            maxvalue])
 
     create_views(viewname, new_viewdef, minvalue, maxvalue)
 
@@ -80,7 +80,7 @@ def create_views(viewname, viewdef, minvalue, maxvalue):
     viewstmt = "CREATE OR REPLACE VIEW {} AS {}"
     single_select = 'SELECT {} FROM "{}"."{}" WHERE relatievehoogteligging = {}'
 
-    for hoogte in range(minvalue, maxvalue):
+    for hoogte in range(minvalue, maxvalue+1):
         selects = []
 
         for schema, tabel, vwattr, minval, maxval in viewdef:
