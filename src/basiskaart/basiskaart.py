@@ -6,9 +6,8 @@ import shutil
 import zipfile
 from io import BytesIO
 
-from objectstore.objectstore import ObjectStore
-
 from basiskaart.basiskaart_setup import VALUES
+from objectstore.objectstore import ObjectStore
 from sql_utils.sql_utils import SQLRunner, createdb
 
 log = logging.getLogger(__name__)
@@ -35,42 +34,42 @@ def fill_basiskaart(tmpdir, schema):
 
 def renamefields():
     fieldmapping = {
-                    'bagbolgst':    'id_bagvbolaagste_huisnummer',
-                    'bagid':	    'BAG_identificatie',
-                    'bagoprid':     'identificatieBAGOPR',
-                    'bagpndid':     'identificatieBAGPND',
-                    'bagvbohgst':   'identificatieBAGVBOHoogsteHuisnummer',
-                    'bagvbolgst':   'identificatieBAGVBOLaagsteHuisnummer',
-                    'begintijd':    'objectbegintijd',
-                    'bgtfunctie':   'bgt_functie',
-                    'bgtfysvkn':    'bgt_fysiekvoorkomen',
-                    'bgtnagid':     'bgt_nummeraanduidingreeks_id',
-                    'bgtorlid':     'bgt_openbareruimtelabel_id',
-                    'bgtpndid':     'bgt_pand_id',
-                    'bgtstatus':    'bgt_status',
-                    'bgttype':      'bgt_type',
-                    'bij_object':   'hoortbij',
-                    'bronhoud':     'bronhouder',
-                    'eindreg':      'eindregistratie',
-                    'eindtijd':     'objecteindtijd',
-                    'einddtijd':    'objecteindtijd',
-                    'geom':         'geometrie',
-                    'hm_aand':      'hectometeraanduiding',
-                    'hoogtelig':    'relatievehoogteligging',
-                    'hoortbij':     'hoortbijtypeoverbrugging',
-                    'inonderzk':    'inonderzoek',
-                    'isbeweegb':    'overbruggingisbeweegbaar',
-                    'labeltekst':   'label_tekst',
-                    'lokaalid':     'identificatie_lokaalid',
-                    'lv_pubdat':    'lv_publicatiedatum',
-                    'namespace':    'identificatie_namespace',
-                    'oprtype':      'openbareruimtetype',
-                    'plusfunct':    'plus_functie',
-                    'plusfysvkn':   'plus_fysiekvoorkomen',
-                    'plusstatus':   'plus_status',
-                    'plustype':     'plus_type',
-                    'tijdreg':      'tijdstipregistratie',
-                    }
+        'bagbolgst': 'id_bagvbolaagste_huisnummer',
+        'bagid': 'BAG_identificatie',
+        'bagoprid': 'identificatieBAGOPR',
+        'bagpndid': 'identificatieBAGPND',
+        'bagvbohgst': 'identificatieBAGVBOHoogsteHuisnummer',
+        'bagvbolgst': 'identificatieBAGVBOLaagsteHuisnummer',
+        'begintijd': 'objectbegintijd',
+        'bgtfunctie': 'bgt_functie',
+        'bgtfysvkn': 'bgt_fysiekvoorkomen',
+        'bgtnagid': 'bgt_nummeraanduidingreeks_id',
+        'bgtorlid': 'bgt_openbareruimtelabel_id',
+        'bgtpndid': 'bgt_pand_id',
+        'bgtstatus': 'bgt_status',
+        'bgttype': 'bgt_type',
+        'bij_object': 'hoortbij',
+        'bronhoud': 'bronhouder',
+        'eindreg': 'eindregistratie',
+        'eindtijd': 'objecteindtijd',
+        'einddtijd': 'objecteindtijd',
+        'geom': 'geometrie',
+        'hm_aand': 'hectometeraanduiding',
+        'hoogtelig': 'relatievehoogteligging',
+        'hoortbij': 'hoortbijtypeoverbrugging',
+        'inonderzk': 'inonderzoek',
+        'isbeweegb': 'overbruggingisbeweegbaar',
+        'labeltekst': 'label_tekst',
+        'lokaalid': 'identificatie_lokaalid',
+        'lv_pubdat': 'lv_publicatiedatum',
+        'namespace': 'identificatie_namespace',
+        'oprtype': 'openbareruimtetype',
+        'plusfunct': 'plus_functie',
+        'plusfysvkn': 'plus_fysiekvoorkomen',
+        'plusstatus': 'plus_status',
+        'plustype': 'plus_type',
+        'tijdreg': 'tijdstipregistratie',
+    }
     tables_in_schema = sql.gettables_in_schema('bgt')
     for t in tables_in_schema:
         table = '"bgt"."{}"'.format(t[2])
