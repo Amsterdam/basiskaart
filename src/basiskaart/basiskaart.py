@@ -44,9 +44,11 @@ def count_rows_in_tables(schema, counters):
 
 
 def report_counts(counters):
+    print('\n')
     print('{:<45} {:>15} {:>15}'.format('table', 'shapes', 'rows in table'))
     for tab, counts in counters.items():
         print('{:<45} {:>15} {:>15}'.format(tab, counts[0], counts[1]))
+    print('\n\n')
 
 def fill_basiskaart(tmpdir, schema, max_extra_dir_nr):
     """
