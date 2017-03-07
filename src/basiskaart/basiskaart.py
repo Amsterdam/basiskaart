@@ -4,6 +4,7 @@ import logging
 import os
 import shutil
 import zipfile
+import shapefile
 from io import BytesIO
 
 from basiskaart.basiskaart_setup import VALUES
@@ -13,6 +14,39 @@ from sql_utils.sql_utils import SQLRunner, createdb
 log = logging.getLogger(__name__)
 sql = SQLRunner()
 
+
+def count_shapes_persubdir(counters, path, dbfs):
+
+    for dbf in dbfs:
+        sf = shapefile.Reader(os.path.join(path, dbf))
+        shapename = dbf.split('.')[0]
+        if shapename in counters:
+            counters[shapename][0] += len(sf.shapes())
+        else:
+            counters[shapename] = [len(sf.shapes()), 0]
+    return counters
+
+
+def count_shapes(extra_tmpdir, counters):
+    for (path, dirs, files) in os.walk(extra_tmpdir):
+        dbfs = [file for file in files if file.endswith('.dbf')]
+        counters = count_shapes_persubdir(counters, path, dbfs)
+    return counters
+
+
+def count_rows_in_tables(schema, counters):
+    tables = sql.gettables_in_schema(schema)
+    for tab_info in tables:
+        table_name = tab_info[2]
+        cnt = sql.run_sql('select count(*) from "{}"."{}"'.format(schema, table_name))
+        counters[table_name][1] += cnt[0][0]
+    return counters
+
+
+def report_counts(counters):
+    print('{:<45} {:>15} {:>15}'.format('table', 'shapes', 'rows in table'))
+    for tab, counts in counters.items():
+        print('{:<45} {:>15} {:>15}'.format(tab, counts[0], counts[1]))
 
 def fill_basiskaart(tmpdir, schema, max_extra_dir_nr):
     """
@@ -27,11 +61,16 @@ def fill_basiskaart(tmpdir, schema, max_extra_dir_nr):
     log.info("Clean existing schema {}".format(schema))
     sql.run_sql("DROP SCHEMA IF EXISTS {} CASCADE".format(schema))
     sql.run_sql("CREATE SCHEMA {}".format(schema))
+    counters = {}
     for extra_dir_nr in range(max_extra_dir_nr):
         extra_tmpdir = os.path.join(tmpdir, str(extra_dir_nr+1))
+        counters = count_shapes(extra_tmpdir, counters)
         sql.import_basiskaart(extra_tmpdir, schema)
+
     if schema == 'bgt':
         renamefields()
+    counters = count_rows_in_tables(schema, counters)
+    report_counts(counters)
 
 
 def renamefields():
@@ -76,7 +115,8 @@ def renamefields():
     for t in tables_in_schema:
         table = '"bgt"."{}"'.format(t[2])
         columns = sql.get_columns_from_table(table)
-        renames = [(col, fieldmapping[col]) for col in columns if col in fieldmapping]
+        renames = [(col, fieldmapping[col]) for col in columns
+                   if col in fieldmapping]
         for fromcol, tocol in renames:
             sql.rename_column(table, fromcol, tocol)
 
@@ -114,7 +154,8 @@ def get_basiskaart(object_store_name, name, tmpdir, prefix, importnames,
             inzip = zipfile.ZipFile(content)
             extra_dir_nr += 1
             extra_tmpdir = os.path.join(tmpdir, str(extra_dir_nr))
-            log.info("Extract %s to temp directory %s", file['name'], extra_tmpdir)
+            log.info("Extract %s to temp directory %s",
+                     file['name'], extra_tmpdir)
             inzip.extractall(extra_tmpdir)
     return extra_dir_nr
 
@@ -122,7 +163,7 @@ def get_basiskaart(object_store_name, name, tmpdir, prefix, importnames,
 def process_basiskaart(kbk_name):
     for object_store_name, tmpdir, path, prefix, importnames, schema, endswith \
             in VALUES[kbk_name]:
-        max_extra_dir_nr = get_basiskaart(object_store_name, path, tmpdir, prefix, importnames,
-                       endswith)
+        max_extra_dir_nr = get_basiskaart(object_store_name, path, tmpdir,
+                                          prefix, importnames, endswith)
 
         fill_basiskaart(tmpdir, schema, max_extra_dir_nr)

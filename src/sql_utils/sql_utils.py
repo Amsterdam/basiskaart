@@ -105,18 +105,23 @@ class SQLRunner(object):
         for root, dirs, files in os.walk(path_to_shp, topdown=False):
             log.info('Processing {} with dirs {}'.format(root, dirs))
             for file in files:
-                if os.path.splitext(file)[1] == '.shp':
+                filename, filetype = os.path.splitext(file)
+                if filetype == '.shp':
+                    appendtext = ''
+                    if self.table_exists(schema, filename):
+                        appendtext = '-append'
                     log.info('Importing {}'.format(root + '/' + file))
                     subprocess.call(
-                        'ogr2ogr -nlt PROMOTE_TO_MULTI -progress -skipfailures '
-                        '-overwrite -f "PostgreSQL" '
+                        'ogr2ogr -nlt PROMOTE_TO_MULTI -progress '
+                        '-skipfailures {APND} -f "PostgreSQL" '
                         'PG:"{PG}" -gt 655360 -s_srs "EPSG:28992" -t_srs '
                         '"EPSG:28992" {LCO} {CONF} {FNAME}'.format(
                             PG=self.get_ogr2_ogr_login(schema, 'basiskaart'),
                             LCO='-lco SPATIAL_INDEX=OFF -lco PRECISION=NO -lco '
                                 'LAUNDER=NO -lco GEOMETRY_NAME=geom',
                             CONF='--config PG_USE_COPY YES',
-                            FNAME=root + '/' + file), shell=True)
+                            FNAME=root + '/' + file,
+                            APND = appendtext), shell=True)
 
 
 def createdb():

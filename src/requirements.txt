@@ -8,3 +8,4 @@ python_swiftclient==3.2.0
 python-keystoneclient==3.10.0
 flake8==3.3.0
 openpyxl==2.4.2
+pyshp==1.2.10
