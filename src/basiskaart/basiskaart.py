@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 sql = SQLRunner()
 
 
-def fill_basiskaart(tmpdir, schema):
+def fill_basiskaart(tmpdir, schema, max_extra_dir_nr):
     """
     Importeer 'basiskaart files' in Postgres
     schema 'basiskaart' mbv ogr2ogr
@@ -27,7 +27,9 @@ def fill_basiskaart(tmpdir, schema):
     log.info("Clean existing schema {}".format(schema))
     sql.run_sql("DROP SCHEMA IF EXISTS {} CASCADE".format(schema))
     sql.run_sql("CREATE SCHEMA {}".format(schema))
-    sql.import_basiskaart(tmpdir, schema)
+    for extra_dir_nr in range(max_extra_dir_nr):
+        extra_tmpdir = os.path.join(tmpdir, str(extra_dir_nr+1))
+        sql.import_basiskaart(extra_tmpdir, schema)
     if schema == 'bgt':
         renamefields()
 
@@ -103,19 +105,24 @@ def get_basiskaart(object_store_name, name, tmpdir, prefix, importnames,
     files = store.get_store_objects(name)
     log.info("Download shape files zip into '{}'".format(tmpdir))
 
+    extra_dir_nr = 0
     for file in files:
         fsplit = os.path.split(file['name'])
         if len(fsplit) == 2 and fsplit[1].startswith(importnames) and \
                 fsplit[1].endswith(endswith):
             content = BytesIO(store.get_store_object(file['name']))
             inzip = zipfile.ZipFile(content)
-            log.info("Extract %s to temp directory %s", file['name'], tmpdir)
-            inzip.extractall(tmpdir)
+            extra_dir_nr += 1
+            extra_tmpdir = os.path.join(tmpdir, str(extra_dir_nr))
+            log.info("Extract %s to temp directory %s", file['name'], extra_tmpdir)
+            inzip.extractall(extra_tmpdir)
+    return extra_dir_nr
 
 
 def process_basiskaart(kbk_name):
     for object_store_name, tmpdir, path, prefix, importnames, schema, endswith \
             in VALUES[kbk_name]:
-        get_basiskaart(object_store_name, path, tmpdir, prefix, importnames,
+        max_extra_dir_nr = get_basiskaart(object_store_name, path, tmpdir, prefix, importnames,
                        endswith)
-        fill_basiskaart(tmpdir, schema)
+
+        fill_basiskaart(tmpdir, schema, max_extra_dir_nr)
