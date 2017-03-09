@@ -20,8 +20,8 @@ def test_hoogteview():
     shutil.rmtree(tmpdir, ignore_errors=True)
     shutil.copytree(
         os.path.dirname(os.path.realpath(__file__)) + '/fixtures/views',
-        tmpdir)
-    fill_basiskaart(tmpdir, 'bgt')
+        tmpdir + '/1')
+    fill_basiskaart(tmpdir, 'bgt', 1)
 
     create_views_based_on_workbook()
     sql = sql_utils.SQLRunner()

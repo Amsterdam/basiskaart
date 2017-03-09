@@ -33,12 +33,13 @@ def test_kbk10():
     Test kbk10
     :return:
     """
-    shutil.rmtree(VALUES['kbk10'][0][1], ignore_errors=True)
+    temp_directory = VALUES['kbk10'][0][1]
+    shutil.rmtree(temp_directory, ignore_errors=True)
     os.path.realpath(__file__)
     shutil.copytree(
         os.path.dirname(os.path.realpath(__file__)) + '/fixtures/kbk10',
-        VALUES['kbk10'][0][1])
-    fill_basiskaart(VALUES['kbk10'][0][1], 'kbk10')
+        temp_directory + '/1')
+    fill_basiskaart(temp_directory, 'kbk10', 1 )
 
     checkcolumns = ('ogc_fid', 'geom', 'WDL_bre_ID', 'AREA')
     checktable('kbk10."WDL_breed_water"', checkcolumns)
@@ -49,11 +50,12 @@ def test_kbk50():
     Test kbk50
     :return:
     """
-    shutil.rmtree(VALUES['kbk50'][0][1], ignore_errors=True)
+    temp_directory = VALUES['kbk50'][0][1]
+    shutil.rmtree(temp_directory, ignore_errors=True)
     shutil.copytree(
         os.path.dirname(os.path.realpath(__file__)) + '/fixtures/kbka50',
-        VALUES['kbk50'][0][1])
-    fill_basiskaart(VALUES['kbk50'][0][1], 'kbk50')
+        temp_directory + '/1')
+    fill_basiskaart(temp_directory, 'kbk50', 1)
 
     checkcolumns = ('ogc_fid', 'geom', 'KRT_A_w_ID', 'AREA')
     checktable('kbk50."KRT_A_wegnummer_bord"', checkcolumns)
@@ -64,12 +66,12 @@ def test_bgt():
     test bgt
     :return:
     """
-    shutil.rmtree(VALUES['bgt'][0][1], ignore_errors=True)
-    tempdir = VALUES['bgt'][0][1]
+    temp_directory = VALUES['bgt'][0][1]
+    shutil.rmtree(temp_directory, ignore_errors=True)
     shutil.copytree(
         os.path.dirname(os.path.realpath(__file__)) + '/fixtures/bgt',
-        tempdir)
-    fill_basiskaart(tempdir, 'bgt')
+        temp_directory + '/1')
+    fill_basiskaart(temp_directory, 'bgt', 1)
     checkcolumns = (
         'ogc_fid', 'geometrie', 'identificatie_namespace',
         'identificatie_lokaalid', 'objectbegintijd', 'objecteindtijd',
