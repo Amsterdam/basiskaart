@@ -50,6 +50,7 @@ def report_counts(counters):
         print('{:<45} {:>15} {:>15}'.format(tab, counts[0], counts[1]))
     print('\n\n')
 
+
 def fill_basiskaart(tmpdir, schema, max_extra_dir_nr):
     """
     Importeer 'basiskaart files' in Postgres
