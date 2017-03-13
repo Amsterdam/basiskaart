@@ -53,6 +53,18 @@ if (BRANCH == "master") {
         }
     }
 
+    node {
+        stage("Create Database in ACC") {
+            tryStep "deployment", {
+                build job: 'Subtask_Openstack_Playbook',
+                parameters: [
+                    [$class: 'StringParameterValue', name: 'INVENTORY', value: 'acceptance'],
+                    [$class: 'StringParameterValue', name: 'PLAYBOOK', value: 'deploy-basiskaart.yml'],
+                ]
+            }
+        }
+    }
+
 
     stage('Waiting for approval') {
         slackSend channel: '#ci-channel', color: 'warning', message: 'Basiskaart is waiting for Production Release - please confirm'
@@ -61,11 +73,23 @@ if (BRANCH == "master") {
 
     node {
         stage('Push production image') {
-        tryStep "image tagging", {
-            def image = docker.image("build.datapunt.amsterdam.nl:5000/datapunt/basiskaart:${env.BUILD_NUMBER}")
-            image.pull()
+            tryStep "image tagging", {
+                def image = docker.image("build.datapunt.amsterdam.nl:5000/datapunt/basiskaart:${env.BUILD_NUMBER}")
+                image.pull()
                 image.push("production")
                 image.push("latest")
+            }
+        }
+    }
+
+    node {
+        stage("Create Database in PROD") {
+            tryStep "deployment", {
+                build job: 'Subtask_Openstack_Playbook',
+                parameters: [
+                    [$class: 'StringParameterValue', name: 'INVENTORY', value: 'production'],
+                    [$class: 'StringParameterValue', name: 'PLAYBOOK', value: 'deploy-basiskaart.yml'],
+                ]
             }
         }
     }
