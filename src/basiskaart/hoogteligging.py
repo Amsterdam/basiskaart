@@ -24,9 +24,8 @@ def read_workbook():
     wb = load_workbook(XLS_VIEWDEF)
     startvalue = 1
     for idx, row in enumerate(wb['Blad1'].rows):
-        rowvalues = [r.value for r in row]
         schema, tabel, categorie, geotype, viewnm, vwattr, laag, grp, \
-        minhoogte, maxhoogte = rowvalues
+            minhoogte, maxhoogte = [r.value for r in row]
 
         if idx >= startvalue:
             viewname = '"{}"."{}_{}<hoogteligging>"'.format(schema.lower(),
