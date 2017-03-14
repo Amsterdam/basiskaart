@@ -12,6 +12,7 @@ services:
     links:
       - database
     environment:
+      DEBUG: 1
       DATABASE_NAME: basiskaart
       DATABASE_PASSWORD: insecure
     command: >

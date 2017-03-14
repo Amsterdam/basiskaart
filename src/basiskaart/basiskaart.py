@@ -4,10 +4,11 @@ import logging
 import os
 import shutil
 import zipfile
-import shapefile
 from io import BytesIO
 
-from basiskaart.basiskaart_setup import VALUES
+import shapefile
+
+from basiskaart.basiskaart_setup import VALUES, DEBUG
 from objectstore.objectstore import ObjectStore
 from sql_utils.sql_utils import SQLRunner, createdb
 
@@ -16,7 +17,6 @@ sql = SQLRunner()
 
 
 def count_shapes_persubdir(counters, path, dbfs):
-
     for dbf in dbfs:
         sf = shapefile.Reader(os.path.join(path, dbf))
         shapename = dbf.split('.')[0]
@@ -70,6 +70,8 @@ def fill_basiskaart(tmpdir, schema, max_extra_dir_nr):
         counters = count_shapes(extra_tmpdir, counters)
         sql.import_basiskaart(extra_tmpdir, schema)
 
+    if len(counters.keys()) < 10 and not DEBUG:
+        raise Exception('No or insufficient input shapefiles present')
     if schema == 'bgt':
         renamefields()
     counters = count_rows_in_tables(schema, counters)
@@ -151,7 +153,7 @@ def get_basiskaart(object_store_name, name, tmpdir, prefix, importnames,
     extra_dir_nr = 0
     for file in files:
         fsplit = os.path.split(file['name'])
-        if len(fsplit) == 2 and fsplit[1].startswith(importnames) and \
+        if len(fsplit) == 2 and importnames in fsplit[1] and \
                 fsplit[1].endswith(endswith):
             content = BytesIO(store.get_store_object(file['name']))
             inzip = zipfile.ZipFile(content)
@@ -160,6 +162,8 @@ def get_basiskaart(object_store_name, name, tmpdir, prefix, importnames,
             log.info("Extract %s to temp directory %s",
                      file['name'], extra_tmpdir)
             inzip.extractall(extra_tmpdir)
+    if extra_dir_nr == 0:
+        raise Exception('Download directory not found, no shapes imported')
     return extra_dir_nr
 
 

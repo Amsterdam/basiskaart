@@ -8,7 +8,6 @@ import logging
 from basiskaart.basiskaart import process_basiskaart
 from basiskaart.hoogteligging import create_views_based_on_workbook
 
-
 LOG = logging.getLogger(__name__)
 
 parser = argparse.ArgumentParser(
@@ -36,6 +35,7 @@ if __name__ == '__main__':
     if not args.viewsonly:
         process_basiskaart(args.basiskaart)
 
-    if not args.no_views:
+    if not args.no_views and (
+            'bgt' in args.basiskaart or 'all' in args.basiskaart):
         LOG.info(" Views voor basiskaart worden gebouwd")
         create_views_based_on_workbook()
