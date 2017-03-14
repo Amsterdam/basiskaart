@@ -6,9 +6,9 @@ Test de basiskaart
 import os
 import shutil
 
-from sql_utils import sql_utils
 from basiskaart.basiskaart import fill_basiskaart
 from basiskaart.basiskaart_setup import VALUES
+from sql_utils import sql_utils
 
 
 # Geen testen voor retrieval van files vanaf objectstore. Bestaande code....
@@ -39,7 +39,7 @@ def test_kbk10():
     shutil.copytree(
         os.path.dirname(os.path.realpath(__file__)) + '/fixtures/kbk10',
         temp_directory + '/1')
-    fill_basiskaart(temp_directory, 'kbk10', 1 )
+    fill_basiskaart(temp_directory, 'kbk10', 1)
 
     checkcolumns = ('ogc_fid', 'geom', 'WDL_bre_ID', 'AREA')
     checktable('kbk10."WDL_breed_water"', checkcolumns)

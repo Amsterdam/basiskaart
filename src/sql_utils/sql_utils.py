@@ -121,7 +121,7 @@ class SQLRunner(object):
                                 'LAUNDER=NO -lco GEOMETRY_NAME=geom',
                             CONF='--config PG_USE_COPY YES',
                             FNAME=root + '/' + file,
-                            APND = appendtext), shell=True)
+                            APND=appendtext), shell=True)
 
 
 def createdb():
