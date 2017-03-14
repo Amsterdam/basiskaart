@@ -103,9 +103,9 @@ if not BGT_OBJECTSTORE_PASSWORD:
 DEBUG = os.getenv('DEBUG', False) == '1'
 
 KBK10 = (
-'bag_brk', '/tmp/kbk10', 'Zip_bestanden', 'Diva', 'BRT10', 'kbk10', '.zip')
+    'bag_brk', '/tmp/kbk10', 'Zip_bestanden', 'Diva', 'BRT10', 'kbk10', '.zip')
 KBK50 = (
-'bag_brk', '/tmp/kbk50', 'Zip_bestanden', 'Diva', 'BRT50', 'kbk50', '.zip')
+    'bag_brk', '/tmp/kbk50', 'Zip_bestanden', 'Diva', 'BRT50', 'kbk50', '.zip')
 BGT = ('basiskaart', '/tmp/bgt', 'shapes/Esri_Shape_', 'BGT',
        'Export_Shapes', 'bgt', '.zip-latest')
 

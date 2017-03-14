@@ -25,7 +25,8 @@ def read_workbook():
     startvalue = 1
     for idx, row in enumerate(wb['Blad1'].rows):
         rowvalues = [r.value for r in row]
-        schema, tabel, categorie, geotype, viewnm, vwattr, laag, grp, minhoogte, maxhoogte = rowvalues
+        schema, tabel, categorie, geotype, viewnm, vwattr, laag, grp, \
+        minhoogte, maxhoogte = rowvalues
 
         if idx >= startvalue:
             viewname = '"{}"."{}_{}<hoogteligging>"'.format(schema.lower(),
@@ -78,9 +79,10 @@ def high_lowvalue(viewdef):
 
 def create_views(viewname, viewdef, minvalue, maxvalue):
     viewstmt = "CREATE OR REPLACE VIEW {} AS {}"
-    single_select = 'SELECT {} FROM "{}"."{}" WHERE relatievehoogteligging = {}'
+    single_select = 'SELECT {} FROM "{}"."{}" ' \
+                    'WHERE relatievehoogteligging = {}'
 
-    for hoogte in range(minvalue, maxvalue+1):
+    for hoogte in range(minvalue, maxvalue + 1):
         selects = []
 
         for schema, tabel, vwattr, minval, maxval in viewdef:
