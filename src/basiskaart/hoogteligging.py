@@ -5,6 +5,7 @@ import os
 from openpyxl import load_workbook
 
 from sql_utils.sql_utils import SQLRunner
+from .basiskaart_setup import MAX_NR_OF_UNAVAILABLE_TABLES
 
 log = logging.getLogger(__name__)
 
@@ -23,6 +24,7 @@ def read_workbook():
     view_definitions = {}
     wb = load_workbook(XLS_VIEWDEF)
     startvalue = 1
+    tables_unavailable = 0
     for idx, row in enumerate(wb['Blad1'].rows):
         schema, tabel, categorie, geotype, viewnm, vwattr, laag, grp, \
             minhoogte, maxhoogte = [r.value for r in row]
@@ -36,11 +38,17 @@ def read_workbook():
                 view_definitions[viewname] += [
                     [schema.lower(), tabel, vwattr, minhoogte, maxhoogte]]
             else:
+                tables_unavailable += 1
+                if tables_unavailable > MAX_NR_OF_UNAVAILABLE_TABLES:
+                    raise Exception('More than %s unavailable tables, input '
+                                    'is unreliable!'
+                                    % MAX_NR_OF_UNAVAILABLE_TABLES)
                 log.warning(
                     "Table {} in view {} does not exist, "
                     "processing continues".format(
                         tabel,
                         viewname))
+
     return view_definitions
 
 

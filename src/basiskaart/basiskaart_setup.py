@@ -28,6 +28,7 @@ def in_docker():
     docker env.
     :return: true when running in a docker container, false otherwise
     """
+    # noinspection PyBroadException
     try:
         return ':/docker/' in open('/proc/1/cgroup', 'r').read()
     except:
@@ -114,3 +115,5 @@ VALUES = {'bgt': (BGT,),
           'kbk50': (KBK50,),
           'all': (KBK10, KBK50, BGT)
           }
+
+MAX_NR_OF_UNAVAILABLE_TABLES = 4
