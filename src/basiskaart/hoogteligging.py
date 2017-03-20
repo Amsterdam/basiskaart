@@ -26,8 +26,9 @@ def read_workbook():
     startvalue = 1
     tables_unavailable = 0
     for idx, row in enumerate(wb['Blad1'].rows):
-        schema, tabel, categorie, geotype, viewnm, vwattr, laag, grp, \
-            minhoogte, maxhoogte = [r.value for r in row]
+        schema, tabel, categorie, geotype, viewnm, vwattr, laag, grp, minhoogte, maxhoogte = [
+            r.value for r in row
+        ]
 
         if idx >= startvalue:
             viewname = '"{}"."{}_{}<hoogteligging>"'.format(schema.lower(),
