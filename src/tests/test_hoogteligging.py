@@ -24,9 +24,8 @@ def test_hoogteview():
 
     create_views_based_on_workbook()
     sql = sql_utils.SQLRunner()
-    for hoogte in ('_2', '_1', '0', '1'):
-        exists = sql.run_sql(
-            "select exists(select * from tables where "
-            "table_name='spoor_lijn{}')".format(
-                hoogte))
+    for hoogte in ('_2', '_1', '0', '1', '2'):
+        exists = sql.run_sql("select exists(select count(*) from bgt.spoor_lijn{})".format(hoogte))
+        print('hoogte {} exists {}'.format(hoogte, exists))
+        print(exists)
         assert (exists[0][0])
