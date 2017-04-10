@@ -147,6 +147,10 @@ def get_basiskaart(object_store_name, name, tmpdir, prefix, importnames,
         log.info("Removed {}".format(tmpdir))
 
     store = ObjectStore(prefix, object_store_name)
+    log.info("==============")
+    log.info(name)
+    log.info("++++++++++++++")
+
     files = store.get_store_objects(name)
     log.info("Download shape files zip into '{}'".format(tmpdir))
 
