@@ -105,7 +105,7 @@ DEBUG = os.getenv('DEBUG', False) == '1'
 
 KBK10 = ('bag_brk', '/tmp/kbk10', 'Zip_bestanden', 'Diva', 'BRT10', 'kbk10', '.zip')
 KBK50 = ('bag_brk', '/tmp/kbk50', 'Zip_bestanden', 'Diva', 'BRT50', 'kbk50', '.zip')
-BGT = ('basiskaart', '/tmp/bgt', 'producten', 'BGT', 'Esri_Shape_totaal', 'bgt', '.zip-latest')
+BGT = ('basiskaart', '/tmp/bgt', 'producten', 'BGT', 'Esri_Shape_totaal', 'bgt', '-latest.zip')
 
 VALUES = {'bgt': (BGT,),
           'kbk10': (KBK10,),
