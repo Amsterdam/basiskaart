@@ -107,7 +107,7 @@ def create_table_indexes(schema, table, columns):
     """
     create table and geometrie index
     """
-    # log.info(f"Create GEO indexes and cluster table for {schema}.{table}")
+    log.info("Create GEO indexes and cluster table for {schema}.{table}".format(table=table, schema=schema))
     sql.run_sql("""
     SET SEARCH_PATH TO {schema};
     CREATE INDEX index_{table} ON {table} (ST_GeoHash(ST_Transform(ST_Envelope(geometrie), 4326)));
@@ -119,7 +119,7 @@ def create_table_indexes(schema, table, columns):
 
     # create field indexes
     for column in columns:
-        log.info(f"Create column index on {table} for {column}")
+        log.info("Create column index on {table} for {column}".format(table=table, column=column))
         if column not in ['id', 'geometrie']:
 
             sql.run_sql("""
