@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
-import os
 
+import os
 from openpyxl import load_workbook
 
 from sql_utils.sql_utils import SQLRunner
@@ -18,7 +18,7 @@ sql = SQLRunner()
 def create_views_based_on_workbook():
     view_definitions = read_workbook()
     create_view(view_definitions)
-
+    create_indexes()
 
 def read_workbook():
     view_definitions = {}
@@ -100,6 +100,39 @@ def create_views(viewname, viewdef, minvalue, maxvalue):
         real_viewname = viewname.replace('<hoogteligging>',
                                          str(hoogte).replace('-', '_'))
         sql.run_sql(viewstmt.format(real_viewname, " UNION ".join(selects)))
+
+
+def create_table_indexes(schema, table, columns):
+
+    # create table and geometrie index
+    log.info(f"Create GEO indexes and cluster table for {schema}.{table}")
+    sql.run_sql(f"""
+    SET SEARCH_PATH TO {schema};
+    CREATE INDEX index_{table} ON {table} (ST_GeoHash(ST_Transform(ST_Envelope(geometrie), 4326)));
+    CLUSTER TABLE USING index_{table};
+    DROP INDEX IF EXISTS index_{table};
+    CLUSTER TABLE USING index_{table};
+    CREATE INDEX index_{table} ON TABLE USING gist(geometrie);
+    """)
+
+    # create field indexes
+    for column in columns:
+        log.info(f"Create column index on {table} for {column}")
+        if column not in ['id', 'geometrie']:
+            sql.run_sql(f"""
+            CREATE INDEX index_{table}_{column} ON {table} USING BTREE ({column});
+            """)
+
+
+def create_indexes():
+    """
+    Create GEO indexes and column btree indexes for all schemas
+    """
+    for schema in ['kbk10', 'kbk50', 'bgt']:
+        table_names = [c[2] for c in sql.gettables_in_schema(schema)]
+        for table_name in table_names:
+            column_names = sql.get_columns_from_table(table_name)
+            create_table_indexes(schema, table_name, column_names)
 
 
 def define_fields(tabel, schema, vwattr):
