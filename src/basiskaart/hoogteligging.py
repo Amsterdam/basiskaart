@@ -106,10 +106,6 @@ def create_views(viewname, viewdef, minvalue, maxvalue):
 def create_table_indexes(schema, table, columns):
     """
     create table and geometrie index
-    :param schema: 
-    :param table: 
-    :param columns: 
-    :return: 
     """
     # log.info(f"Create GEO indexes and cluster table for {schema}.{table}")
     sql.run_sql(f"""
