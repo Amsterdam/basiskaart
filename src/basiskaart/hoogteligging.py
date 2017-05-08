@@ -104,8 +104,14 @@ def create_views(viewname, viewdef, minvalue, maxvalue):
 
 
 def create_table_indexes(schema, table, columns):
-    # create table and geometrie index
-    log.info(f"Create GEO indexes and cluster table for {schema}.{table}")
+    """
+    create table and geometrie index
+    :param schema: 
+    :param table: 
+    :param columns: 
+    :return: 
+    """
+    # log.info(f"Create GEO indexes and cluster table for {schema}.{table}")
     sql.run_sql(f"""
     SET SEARCH_PATH TO {schema};
     CREATE INDEX index_{table} ON {table} (ST_GeoHash(ST_Transform(ST_Envelope(geometrie), 4326)));
