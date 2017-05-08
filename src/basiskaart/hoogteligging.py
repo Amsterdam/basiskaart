@@ -18,7 +18,7 @@ sql = SQLRunner()
 def create_views_based_on_workbook():
     view_definitions = read_workbook()
     create_view(view_definitions)
-    create_indexes()
+    # create_indexes()
 
 
 def read_workbook():
