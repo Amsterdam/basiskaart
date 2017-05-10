@@ -62,8 +62,11 @@ class SQLRunner(object):
 
     def get_columns_from_table(self, table):
         dbcur = self.conn.cursor()
-        dbcur.execute("SELECT * FROM {} WHERE 1=0".format(table))
-        return [desc[0] for desc in dbcur.description]
+        try:
+            dbcur.execute("SELECT * FROM {} WHERE 1=0".format(table))
+            return [desc[0] for desc in dbcur.description]
+        except:
+            return []
 
     def gettables_in_schema(self, schema):
         query = """ SELECT * FROM information_schema.tables

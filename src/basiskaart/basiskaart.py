@@ -8,7 +8,7 @@ from io import BytesIO
 
 import shapefile
 
-from basiskaart.basiskaart_setup import VALUES, DEBUG
+from basiskaart.basiskaart_setup import VALUES
 from objectstore.objectstore import ObjectStore
 from sql_utils.sql_utils import SQLRunner, createdb
 
@@ -70,8 +70,8 @@ def fill_basiskaart(tmpdir, schema, max_extra_dir_nr):
         counters = count_shapes(extra_tmpdir, counters)
         sql.import_basiskaart(extra_tmpdir, schema)
 
-    if len(counters.keys()) < 10 and not DEBUG:
-        raise Exception('No or insufficient input shapefiles present')
+    # if len(counters.keys()) < 10 and not DEBUG:
+    #     raise Exception('No or insufficient input shapefiles present')
     if schema == 'bgt':
         renamefields()
     counters = count_rows_in_tables(schema, counters)

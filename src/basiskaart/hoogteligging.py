@@ -18,7 +18,6 @@ sql = SQLRunner()
 def create_views_based_on_workbook():
     view_definitions = read_workbook()
     create_view(view_definitions)
-    # create_indexes()
 
 
 def read_workbook():
@@ -42,9 +41,8 @@ def read_workbook():
             else:
                 tables_unavailable += 1
                 if tables_unavailable > MAX_NR_OF_UNAVAILABLE_TABLES:
-                    raise Exception('More than %s unavailable tables, input '
-                                    'is unreliable!'
-                                    % MAX_NR_OF_UNAVAILABLE_TABLES)
+                    raise Exception(
+                        'More than {MAX_NR_OF_UNAVAILABLE_TABLES} unavailable tables, input is unreliable!')
                 log.warning(
                     "Table {} in view {} does not exist, "
                     "processing continues".format(
@@ -107,25 +105,26 @@ def create_table_indexes(schema, table, columns):
     """
     create table and geometrie index
     """
-    log.info("Create GEO indexes and cluster table for {schema}.{table}".format(table=table, schema=schema))
-    sql.run_sql("""
-    SET SEARCH_PATH TO {schema};
-    CREATE INDEX index_{table} ON {table} (ST_GeoHash(ST_Transform(ST_Envelope(geometrie), 4326)));
-    CLUSTER TABLE USING index_{table};
-    DROP INDEX IF EXISTS index_{table};
-    CLUSTER TABLE USING index_{table};
-    CREATE INDEX index_{table} ON TABLE USING gist(geometrie);
-    """).format(schema=schema, table=table)
-
+    log.info(f"Create GEO indexes and cluster table for {schema}.{table}")
+    if 'geometrie' in columns:
+        s = f"""
+        SET SEARCH_PATH TO {schema};
+        DROP INDEX IF EXISTS index_{table.lower()}_geo;
+        DROP INDEX IF EXISTS index_{table.lower()}_gist;
+        CREATE INDEX index_{table.lower()}_gist ON "{table}" USING gist(geometrie);
+        CLUSTER "{table}" USING "index_{table.lower()}_gist";
+        """
+        sql.run_sql(s)
     # create field indexes
     for column in columns:
-        log.info("Create column index on {table} for {column}".format(table=table, column=column))
+        log.info(f"Create column index on {table} for {column}")
         if column not in ['id', 'geometrie']:
-
-            sql.run_sql("""
-            SET SEARCH_PATH TO {schema};
-            CREATE INDEX index_{table}_{column} ON {table} USING BTREE ({column});
-            """.format(schema=schema, table=table, column=column))
+            try:
+                sql.run_sql(f"""
+                SET SEARCH_PATH TO {schema};
+                CREATE INDEX index_{table}_{column} ON "{table}" USING BTREE ({column});""")
+            except:
+                pass
 
 
 def create_indexes():
@@ -135,8 +134,9 @@ def create_indexes():
     for schema in ['kbk10', 'kbk50', 'bgt']:
         table_names = [c[2] for c in sql.gettables_in_schema(schema)]
         for table_name in table_names:
-            column_names = sql.get_columns_from_table(table_name)
-            create_table_indexes(schema, table_name, column_names)
+            if sql.table_exists(schema, table_name):
+                column_names = sql.get_columns_from_table(f'{schema}."{table_name}"')
+                create_table_indexes(schema, table_name, column_names)
 
 
 def define_fields(tabel, schema, vwattr):
