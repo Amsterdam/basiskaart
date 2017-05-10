@@ -18,5 +18,5 @@ services:
     command: >
       bash -c "/app/.jenkins/docker-wait.sh \
               && cd /app/.jenkins/test/  \
-#              && ./docker-code-check.sh \
+              && ./docker-code-check.sh \
               && ./docker-test.sh"
