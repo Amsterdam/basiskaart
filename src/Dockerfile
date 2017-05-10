@@ -1,11 +1,14 @@
-FROM amsterdam/docker_python:latest
-MAINTAINER datapunt.ois@amsterdam.nl
+FROM ubuntu:latest
+# deze wordt gebruikt omdat er een late versie van gdal-bin gesupport wordt, deze in niet aanwezig in debian wheezy
+# met python3.6
 
 RUN apt-get update \
 	&& apt-get install -y \
+        python3 \
+        python3-dev \
+        python3-pip \
         libpq-dev \
         gdal-bin \
-        libgeos-dev \
 		postgresql-client \
 		netcat \
 	&& apt-get clean \
@@ -18,8 +21,6 @@ COPY . /app/
 COPY .jenkins/import /.jenkins-import/
 
 RUN chown -R datapunt: /app \
-    && find /app/ -name "*.pyc" -exec rm -f {} \; \
-    && find /app/ -name "__pycache__" -exec rm -rf {} \; \
     && pip3 install --no-cache-dir -r requirements.txt
 
 USER datapunt

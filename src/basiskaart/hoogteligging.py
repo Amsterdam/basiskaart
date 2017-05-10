@@ -105,24 +105,26 @@ def create_table_indexes(schema, table, columns):
     """
     create table and geometrie index
     """
-    log.info(f"Create GEO indexes and cluster table for {schema}.{table}") # NOQA
+    log.info("Create GEO indexes and cluster table for {schema}.{table}".format(schema=schema, table=table))
     if 'geometrie' in columns:
-        s = f"""
+        s = """
         SET SEARCH_PATH TO {schema};
-        DROP INDEX IF EXISTS index_{table.lower()}_geo;
-        DROP INDEX IF EXISTS index_{table.lower()}_gist;
-        CREATE INDEX index_{table.lower()}_gist ON "{table}" USING gist(geometrie);
-        CLUSTER "{table}" USING "index_{table.lower()}_gist";
-        """
+        DROP INDEX IF EXISTS index_{table_lower}_geo;
+        DROP INDEX IF EXISTS index_{table_lower}_gist;
+        CREATE INDEX index_{table_lower}_gist ON "{table}" USING gist(geometrie);
+        CLUSTER "{table}" USING "index_{table_lower}_gist";
+        """.format(schema=schema, table=table, table_lower=table.lower())
+
         sql.run_sql(s)
     # create field indexes
     for column in columns:
-        log.info(f"Create column index on {table} for {column}")
+        log.info("Create column index on {table} for {column}".format(table=table, column=column))
         if column not in ['id', 'geometrie']:
             try:
-                sql.run_sql(f"""
+                sql.run_sql("""
                 SET SEARCH_PATH TO {schema};
-                CREATE INDEX index_{table}_{column} ON "{table}" USING BTREE ({column});""")
+                CREATE INDEX index_{table}_{column} ON "{table}" USING BTREE ({column});""".format(
+                    schema=schema, table=table, column=column))
             except:
                 pass
 
@@ -135,7 +137,8 @@ def create_indexes():
         table_names = [c[2] for c in sql.gettables_in_schema(schema)]
         for table_name in table_names:
             if sql.table_exists(schema, table_name):
-                column_names = sql.get_columns_from_table(f'{schema}."{table_name}"')
+                column_names = sql.get_columns_from_table(
+                    '{schema}."{table}"'.format(schema=schema, table=table_name))
                 create_table_indexes(schema, table_name, column_names)
 
 
