@@ -105,7 +105,7 @@ def create_table_indexes(schema, table, columns):
     """
     create table and geometrie index
     """
-    log.info(f"Create GEO indexes and cluster table for {schema}.{table}")
+    log.info(f"Create GEO indexes and cluster table for {schema}.{table}") # NOQA
     if 'geometrie' in columns:
         s = f"""
         SET SEARCH_PATH TO {schema};
