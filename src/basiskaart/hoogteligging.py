@@ -136,10 +136,11 @@ def create_indexes():
     for schema in ['kbk10', 'kbk50', 'bgt']:
         table_names = [c[2] for c in sql.gettables_in_schema(schema)]
         for table_name in table_names:
-            if sql.table_exists(schema, table_name.replace('-', '_')):
+            table = table_name.replace('-', '_')
+            if sql.table_exists(schema, table):
                 column_names = sql.get_columns_from_table(
-                    '{schema}."{table}"'.format(schema=schema, table=table_name))
-                create_table_indexes(schema, table_name, column_names)
+                    '{schema}."{table}"'.format(schema=schema, table=table))
+                create_table_indexes(schema, table, column_names)
 
 
 def define_fields(tabel, schema, vwattr):
