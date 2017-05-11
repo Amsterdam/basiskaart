@@ -113,7 +113,7 @@ def create_table_indexes(schema, table, columns):
         DROP INDEX IF EXISTS index_{table_lower}_gist;
         CREATE INDEX index_{table_lower}_gist ON "{table}" USING gist(geometrie);
         CLUSTER "{table}" USING "index_{table_lower}_gist";
-        """.format(schema=schema, table=table, table_lower=table.lower().replace('-', '_')).
+        """.format(schema=schema, table=table, table_lower=table.lower())
 
         sql.run_sql(s)
     # create field indexes
@@ -136,7 +136,7 @@ def create_indexes():
     for schema in ['kbk10', 'kbk50', 'bgt']:
         table_names = [c[2] for c in sql.gettables_in_schema(schema)]
         for table_name in table_names:
-            if sql.table_exists(schema, table_name):
+            if sql.table_exists(schema, table_name.replace('-', '_')):
                 column_names = sql.get_columns_from_table(
                     '{schema}."{table}"'.format(schema=schema, table=table_name))
                 create_table_indexes(schema, table_name, column_names)
