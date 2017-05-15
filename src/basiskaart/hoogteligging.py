@@ -99,7 +99,11 @@ def create_views(viewname, viewdef, minvalue, maxvalue):
 
         real_viewname = viewname.replace('<hoogteligging>',
                                          str(hoogte).replace('-', '_'))
-        sql.run_sql(viewstmt.format(real_viewname, " UNION ".join(selects)))
+        try:
+            sql.run_sql(viewstmt.format(real_viewname, " UNION ".join(selects)))
+        except Exception:
+            log.info(f"Exception while creating materialized view: {real_viewname}")
+
 
 
 def create_table_indexes(schema, table, columns):
