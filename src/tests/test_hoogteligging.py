@@ -38,4 +38,3 @@ def test_create_indexes():
         tmpdir + '/1')
     fill_basiskaart(tmpdir, 'bgt', 1)
     create_indexes()
-    # assert False
