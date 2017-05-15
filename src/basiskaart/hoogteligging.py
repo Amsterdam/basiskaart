@@ -85,7 +85,8 @@ def high_lowvalue(viewdef):
 
 
 def create_views(viewname, viewdef, minvalue, maxvalue):
-    viewstmt = "CREATE OR REPLACE VIEW {} AS {}"
+    # viewstmt = "CREATE OR REPLACE VIEW {} AS {}"
+    viewstmt = "CREATE MATERIALIZED VIEW {} AS {} WITH DATA"
     single_select = 'SELECT {} FROM "{}"."{}" ' \
                     'WHERE relatievehoogteligging = {}'
 
