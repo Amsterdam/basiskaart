@@ -18,8 +18,8 @@ services:
       DB_NAME: basiskaart
       DB_USER: basiskaart
       DB_PASSWORD: insecure
-      BAG_OBJECTSTORE_PASSWORD: insecure
-      BGT_OBJECTSTORE_PASSWORD: insecure
+      BAG_OBJECTSTORE_PASSWORD: ${BAG_OBJECTSTORE_PASSWORD}
+      BGT_OBJECTSTORE_PASSWORD: ${BGT_OBJECTSTORE_PASSWORD}
     command: >
       bash -c "/app/.jenkins/docker-wait.sh \
               && python3 ./import_basiskaart.py"

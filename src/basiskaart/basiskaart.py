@@ -15,6 +15,46 @@ from sql_utils.sql_utils import SQLRunner, createdb
 log = logging.getLogger(__name__)
 sql = SQLRunner()
 
+fieldmapping = {
+    'bagbolgst': 'id_bagvbolaagste_huisnummer',
+    'bagid': 'BAG_identificatie',
+    'bagoprid': 'identificatieBAGOPR',
+    'bagpndid': 'identificatieBAGPND',
+    'bagvbohgst': 'identificatieBAGVBOHoogsteHuisnummer',
+    'bagvbolgst': 'identificatieBAGVBOLaagsteHuisnummer',
+    'begintijd': 'objectbegintijd',
+    'bgtfunctie': 'bgt_functie',
+    'bgtfysvkn': 'bgt_fysiekvoorkomen',
+    'bgtfyskvkn': 'bgt_fysiekvoorkomen',
+    'bgtnagid': 'bgt_nummeraanduidingreeks_id',
+    'bgtorlid': 'bgt_openbareruimtelabel_id',
+    'bgtpndid': 'bgt_pand_id',
+    'bgtstatus': 'bgt_status',
+    'bgttype': 'bgt_type',
+    'bij_object': 'hoortbij',
+    'bronhoud': 'bronhouder',
+    'eindreg': 'eindregistratie',
+    'eindtijd': 'objecteindtijd',
+    'einddtijd': 'objecteindtijd',
+    'geom': 'geometrie',
+    'hm_aand': 'hectometeraanduiding',
+    'hoogtelig': 'relatievehoogteligging',
+    'hoortbij': 'hoortbijtypeoverbrugging',
+    'inonderzk': 'inonderzoek',
+    'isbeweegb': 'overbruggingisbeweegbaar',
+    'labeltekst': 'label_tekst',
+    'lokaalid': 'identificatie_lokaalid',
+    'lv_pubdat': 'lv_publicatiedatum',
+    'namespace': 'identificatie_namespace',
+    'oprtype': 'openbareruimtetype',
+    'plusfunct': 'plus_functie',
+    'plusfysvkn': 'plus_fysiekvoorkomen',
+    'plusfyskvkn': 'plus_fysiekvoorkomen',
+    'plusstatus': 'plus_status',
+    'plustype': 'plus_type',
+    'tijdreg': 'tijdstipregistratie',
+}
+
 
 def count_shapes_persubdir(counters, path, dbfs):
     for dbf in dbfs:
@@ -79,43 +119,6 @@ def fill_basiskaart(tmpdir, schema, max_extra_dir_nr):
 
 
 def renamefields():
-    fieldmapping = {
-        'bagbolgst': 'id_bagvbolaagste_huisnummer',
-        'bagid': 'BAG_identificatie',
-        'bagoprid': 'identificatieBAGOPR',
-        'bagpndid': 'identificatieBAGPND',
-        'bagvbohgst': 'identificatieBAGVBOHoogsteHuisnummer',
-        'bagvbolgst': 'identificatieBAGVBOLaagsteHuisnummer',
-        'begintijd': 'objectbegintijd',
-        'bgtfunctie': 'bgt_functie',
-        'bgtfysvkn': 'bgt_fysiekvoorkomen',
-        'bgtnagid': 'bgt_nummeraanduidingreeks_id',
-        'bgtorlid': 'bgt_openbareruimtelabel_id',
-        'bgtpndid': 'bgt_pand_id',
-        'bgtstatus': 'bgt_status',
-        'bgttype': 'bgt_type',
-        'bij_object': 'hoortbij',
-        'bronhoud': 'bronhouder',
-        'eindreg': 'eindregistratie',
-        'eindtijd': 'objecteindtijd',
-        'einddtijd': 'objecteindtijd',
-        'geom': 'geometrie',
-        'hm_aand': 'hectometeraanduiding',
-        'hoogtelig': 'relatievehoogteligging',
-        'hoortbij': 'hoortbijtypeoverbrugging',
-        'inonderzk': 'inonderzoek',
-        'isbeweegb': 'overbruggingisbeweegbaar',
-        'labeltekst': 'label_tekst',
-        'lokaalid': 'identificatie_lokaalid',
-        'lv_pubdat': 'lv_publicatiedatum',
-        'namespace': 'identificatie_namespace',
-        'oprtype': 'openbareruimtetype',
-        'plusfunct': 'plus_functie',
-        'plusfysvkn': 'plus_fysiekvoorkomen',
-        'plusstatus': 'plus_status',
-        'plustype': 'plus_type',
-        'tijdreg': 'tijdstipregistratie',
-    }
     tables_in_schema = sql.gettables_in_schema('bgt')
     for t in tables_in_schema:
         table = '"bgt"."{}"'.format(t[2])
@@ -150,13 +153,15 @@ def get_basiskaart(object_store_name, name, tmpdir, prefix, importnames,
 
     files = store.get_store_objects(name)
     log.info("\nDownload shape files zip into '{}'".format(tmpdir))
-
     extra_dir_nr = 0
     for file in files:
+        log.info("Found in objectstore: " + file['name'])
         fsplit = os.path.split(file['name'])
         if len(fsplit) == 2 and importnames in fsplit[1] and \
                 fsplit[1].endswith(endswith):
+            log.info("Retrieving from objectstore: " + file['name'])
             content = BytesIO(store.get_store_object(file['name']))
+            log.info("make a zip file from: " + file['name'])
             inzip = zipfile.ZipFile(content)
             extra_dir_nr += 1
             extra_tmpdir = os.path.join(tmpdir, str(extra_dir_nr))

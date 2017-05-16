@@ -6,6 +6,7 @@ from openpyxl import load_workbook
 
 from sql_utils.sql_utils import SQLRunner
 from .basiskaart_setup import MAX_NR_OF_UNAVAILABLE_TABLES
+from .basiskaart import fieldmapping
 
 log = logging.getLogger(__name__)
 
@@ -150,7 +151,9 @@ def create_indexes():
 def define_fields(tabel, schema, vwattr):
     sql_table_name = '"{}"."{}"'.format(schema, tabel)
     foundcolumns = sql.get_columns_from_table(sql_table_name)
-    required_columns = [field.strip() for field in vwattr.split(',')]
+    required_columns_input = [field.strip() for field in vwattr.split(',')]
+    required_columns = [fieldmapping.get(c, c) for c in required_columns_input]
+
     columns_not_found = ['"' + column + '"' for column in required_columns if
                          column not in foundcolumns]
     required_columns = ['"' + column + '"' for column in required_columns]
