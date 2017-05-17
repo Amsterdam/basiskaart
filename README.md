@@ -21,12 +21,12 @@ Daarnaast zijn de kolommen hernoemd naar de originele waarden, omdat ze afgekort
 Voor BGT worden daarnaast views gemaakt die zijn gebaseerd op een spreadsheet zoals terug te vinden in basiskaart/fixtures. 
 Het script tolereert ontbrekende tabellen en kolommen in de shape tabellen.
 
-### run import in docker locally
+### run import in docker lokaal
 
-- note that the import is using the ogr2ogr binary installed in the Linux container
+- de import gebruikt de ogr2ogr binary die geinstalleerd is in de Linux container
 
-- note that the import is reading large files (Esri_Shape_totaal-latest.zip is 2 GB)
-    so your docker daemon needs >3 GB memory.
+- de import leest grote bestanden (Esri_Shape_totaal-latest.zip is 2 GB)
+    dus je docker runner heeft >3 GB memory nodig.
     
 
     # run database import
@@ -40,4 +40,3 @@ Het script tolereert ontbrekende tabellen en kolommen in de shape tabellen.
 
 ### run tests
     docker-compose run importer pytest
-    
