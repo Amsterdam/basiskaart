@@ -152,6 +152,7 @@ def create_indexes():
 
 def define_fields(tabel, schema, vwattr):
     sql_table_name = '"{}"."{}"'.format(schema, tabel)
+    vwattr += ', geometrie'
     foundcolumns = sql.get_columns_from_table(sql_table_name)
     required_columns_input = [field.strip() for field in vwattr.split(',')]
     required_columns = [fieldmapping.get(c, c) for c in required_columns_input]
