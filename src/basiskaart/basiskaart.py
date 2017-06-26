@@ -105,6 +105,7 @@ def fill_basiskaart(tmpdir, schema, max_extra_dir_nr):
     sql.run_sql("DROP SCHEMA IF EXISTS {} CASCADE".format(schema))
     sql.run_sql("CREATE SCHEMA {}".format(schema))
     counters = {}
+
     for extra_dir_nr in range(max_extra_dir_nr):
         extra_tmpdir = os.path.join(tmpdir, str(extra_dir_nr+1))
         counters = count_shapes(extra_tmpdir, counters)
@@ -154,6 +155,7 @@ def get_basiskaart(object_store_name, name, tmpdir, prefix, importnames,
     files = store.get_store_objects(name)
     log.info("\nDownload shape files zip into '{}'".format(tmpdir))
     extra_dir_nr = 0
+
     for file in files:
         log.info("Found in objectstore: " + file['name'])
         fsplit = os.path.split(file['name'])
@@ -168,15 +170,22 @@ def get_basiskaart(object_store_name, name, tmpdir, prefix, importnames,
             log.info("Extract %s to temp directory %s",
                      file['name'], extra_tmpdir)
             inzip.extractall(extra_tmpdir)
+
     if extra_dir_nr == 0:
         raise Exception('Download directory not found, no shapes imported')
+
     return extra_dir_nr
 
 
 def process_basiskaart(kbk_name):
+    """
+    Download objectsotre bestanden en zet deze in de database
+    """
     for object_store_name, tmpdir, path, prefix, importnames, schema, endswith \
             in SOURCE_DATA_MAP[kbk_name]:
-        max_extra_dir_nr = get_basiskaart(object_store_name, path, tmpdir,
-                                          prefix, importnames, endswith)
+
+        max_extra_dir_nr = get_basiskaart(
+            object_store_name, path, tmpdir,
+            prefix, importnames, endswith)
 
         fill_basiskaart(tmpdir, schema, max_extra_dir_nr)
