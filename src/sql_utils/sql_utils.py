@@ -52,11 +52,12 @@ class SQLRunner(object):
             return []
 
         except psycopg2.DatabaseError as e:
-            log.debug("Database script exception: procedures :%s" % str(e))
+            log.debug("Database script exception: :%s", str(e))
             raise Exception(e)
 
     def rename_column(self, table, column_from, column_to):
-        query = 'ALTER TABLE {} RENAME COLUMN "{}" TO "{}"'.format(table, column_from, column_to)
+        query = 'ALTER TABLE {} RENAME COLUMN "{}" TO "{}"'.format(
+            table, column_from, column_to)
         dbcur = self.conn.cursor()
         dbcur.execute(query)
 
@@ -65,7 +66,8 @@ class SQLRunner(object):
         try:
             dbcur.execute("SELECT * FROM {} WHERE 1=0".format(table))
             return [desc[0] for desc in dbcur.description]
-        except:
+        except ValueError:
+            # HMM... catch all..
             return []
 
     def gettables_in_schema(self, schema):
@@ -94,8 +96,9 @@ class SQLRunner(object):
 
     def get_ogr2_ogr_login(self, schema, dbname):
         log.info(
-            'Logging into {}:{} db {}.{}'.format(self.host, self.port, dbname,
-                                                 schema))
+            'Logging into %s:%s db %s.%s',
+            self.host, self.port, dbname, schema)
+
         return "host={} port={} ACTIVE_SCHEMA={} user={} " \
                "dbname={} password={}".format(self.host, self.port,
                                               schema, self.user, dbname,
@@ -104,43 +107,57 @@ class SQLRunner(object):
     def import_basiskaart(self, path_to_shp, schema):
         os.putenv('PGCLIENTENCODING', 'UTF8')
 
-        log.info('import schema {} in {}'.format(path_to_shp, schema))
+        log.info('import schema %s in %s', path_to_shp, schema)
+
         for root, dirs, files in os.walk(path_to_shp, topdown=False):
-            log.info('Processing {} with dirs {}'.format(root, dirs))
-            for file in files:
-                filename, filetype = os.path.splitext(file)
-                if filetype == '.shp':
-                    appendtext = ''
-                    if self.table_exists(schema, filename):
-                        appendtext = '-append'
-                    log.info('Importing {}'.format(root + '/' + file))
-                    subprocess.call(
-                        'ogr2ogr -nlt PROMOTE_TO_MULTI -progress '
-                        '-skipfailures {APND} -f "PostgreSQL" '
-                        'PG:"{PG}" -gt 655360 -s_srs "EPSG:28992" -t_srs '
-                        '"EPSG:28992" {LCO} {CONF} {FNAME}'.format(
-                            PG=self.get_ogr2_ogr_login(schema, 'basiskaart'),
-                            LCO='-lco SPATIAL_INDEX=OFF -lco PRECISION=NO -lco '
-                                'LAUNDER=NO -lco GEOMETRY_NAME=geom',
-                            CONF='--config PG_USE_COPY YES',
-                            FNAME=root + '/' + file,
-                            APND=appendtext), shell=True)
+            log.info('Processing %s with dirs %s', root, dirs)
+            for filename in files:
+                self.process_file(filename, schema, root)
+
+    def process_file(self, filename, schema, root):
+
+        filename, filetype = os.path.splitext(filename)
+        if filetype == '.shp':
+            appendtext = ''
+            if self.table_exists(schema, filename):
+                appendtext = '-append'
+            log.info('Importing %s', root + '/' + filename)
+            self.run_subprocess_ogr(appendtext, schema, root, filename)
+
+    def run_subprocess_ogr(self, appendtext, schema, root, filename):
+        """
+        OGR subprocess
+        """
+        subprocess.call(
+            'ogr2ogr -nlt PROMOTE_TO_MULTI -progress '
+            '-skipfailures {APND} -f "PostgreSQL" '
+            'PG:"{PG}" -gt 655360 -s_srs "EPSG:28992" -t_srs '
+            '"EPSG:28992" {LCO} {CONF} {FNAME}'.format(
+                PG=self.get_ogr2_ogr_login(schema, 'basiskaart'),
+                LCO='-lco SPATIAL_INDEX=OFF -lco PRECISION=NO -lco '
+                    'LAUNDER=NO -lco GEOMETRY_NAME=geom',
+                CONF='--config PG_USE_COPY YES',
+                FNAME=root + '/' + filename,
+                APND=appendtext), shell=True)
 
 
 def createdb():
     try:
-        SQLRunner(host=DATABASE['HOST'],
-                  port=DATABASE['PORT'],
-                  dbname=DATABASE['NAME'],
-                  user=DATABASE['USER'],
-                  password=DATABASE['PASSWORD'])
+        SQLRunner(
+            host=DATABASE['HOST'],
+            port=DATABASE['PORT'],
+            dbname=DATABASE['NAME'],
+            user=DATABASE['USER'],
+            password=DATABASE['PASSWORD'])
+
     except psycopg2.OperationalError:
 
-        sqlconn = SQLRunner(host=DATABASE['HOST'],
-                            port=DATABASE['PORT'],
-                            dbname=DATABASE['NAME'],
-                            user=DATABASE['USER'],
-                            password=DATABASE['PASSWORD'])
+        sqlconn = SQLRunner(
+            host=DATABASE['HOST'],
+            port=DATABASE['PORT'],
+            dbname=DATABASE['NAME'],
+            user=DATABASE['USER'],
+            password=DATABASE['PASSWORD'])
 
         sqlconn.run_sql('CREATE DATABASE basiskaart;')
         sqlconn.commit()

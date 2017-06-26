@@ -99,18 +99,24 @@ if not BAG_OBJECTSTORE_PASSWORD:
     BAG_OBJECTSTORE_PASSWORD = os.getenv(
         'BAG_OBJECTSTORE_PASSWORD', 'insecure')
 if not BGT_OBJECTSTORE_PASSWORD:
-    BGT_OBJECTSTORE_PASSWORD = os.getenv('BGT_OBJECTSTORE_PASSWORD', 'insecure')
+    BGT_OBJECTSTORE_PASSWORD = os.getenv(
+        'BGT_OBJECTSTORE_PASSWORD', 'insecure')
 
 DEBUG = os.getenv('DEBUG', False) == '1'
 
-KBK10 = ('bag_brk', '/tmp/kbk10', 'Zip_bestanden', 'Diva', 'BRT10', 'kbk10', '.zip')
-KBK50 = ('bag_brk', '/tmp/kbk50', 'Zip_bestanden', 'Diva', 'BRT50', 'kbk50', '.zip')
-BGT = ('basiskaart', '/tmp/bgt', 'products', 'BGT', 'Esri_Shape_totaal', 'bgt', '-latest.zip')
+KBK10 = (
+    'bag_brk', '/tmp/kbk10', 'Zip_bestanden', 'Diva', 'BRT10', 'kbk10', '.zip')
+KBK50 = (
+    'bag_brk', '/tmp/kbk50', 'Zip_bestanden', 'Diva', 'BRT50', 'kbk50', '.zip')
+BGT = (
+    'basiskaart', '/tmp/bgt', 'products',
+    'BGT', 'Esri_Shape_totaal', 'bgt', '-latest.zip')
 
-VALUES = {'bgt': (BGT,),
-          'kbk10': (KBK10,),
-          'kbk50': (KBK50,),
-          'all': (KBK10, KBK50, BGT)
-          }
+SOURCE_DATA_MAP = {
+    'bgt': (BGT,),
+    'kbk10': (KBK10,),
+    'kbk50': (KBK50,),
+    'all': (KBK10, KBK50, BGT)
+}
 
 MAX_NR_OF_UNAVAILABLE_TABLES = 4

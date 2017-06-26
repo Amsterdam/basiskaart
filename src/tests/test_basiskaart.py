@@ -7,7 +7,7 @@ import os
 import shutil
 
 from basiskaart.basiskaart import fill_basiskaart
-from basiskaart.basiskaart_setup import VALUES
+from basiskaart.basiskaart_setup import SOURCE_DATA_MAP
 from sql_utils import sql_utils
 
 
@@ -23,9 +23,9 @@ def checktable(table, checkcolumns):
     """
     sql = sql_utils.SQLRunner()
     foundcolumns = sql.get_columns_from_table(table)
-    assert (len(foundcolumns) == len(checkcolumns))
+    assert len(foundcolumns) == len(checkcolumns)
     result = [col for col in checkcolumns if col in foundcolumns]
-    assert (len(result) == len(checkcolumns))
+    assert len(result) == len(checkcolumns)
 
 
 def test_kbk10():
@@ -33,7 +33,7 @@ def test_kbk10():
     Test kbk10
     :return:
     """
-    temp_directory = VALUES['kbk10'][0][1]
+    temp_directory = SOURCE_DATA_MAP['kbk10'][0][1]
     shutil.rmtree(temp_directory, ignore_errors=True)
     os.path.realpath(__file__)
     shutil.copytree(
@@ -50,7 +50,7 @@ def test_kbk50():
     Test kbk50
     :return:
     """
-    temp_directory = VALUES['kbk50'][0][1]
+    temp_directory = SOURCE_DATA_MAP['kbk50'][0][1]
     shutil.rmtree(temp_directory, ignore_errors=True)
     shutil.copytree(
         os.path.dirname(os.path.realpath(__file__)) + '/fixtures/kbka50',
@@ -66,7 +66,7 @@ def test_bgt():
     test bgt
     :return:
     """
-    temp_directory = VALUES['bgt'][0][1]
+    temp_directory = SOURCE_DATA_MAP['bgt'][0][1]
     shutil.rmtree(temp_directory, ignore_errors=True)
     shutil.copytree(
         os.path.dirname(os.path.realpath(__file__)) + '/fixtures/bgt',

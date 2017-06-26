@@ -8,7 +8,7 @@ from io import BytesIO
 
 import shapefile
 
-from basiskaart.basiskaart_setup import VALUES
+from basiskaart.basiskaart_setup import SOURCE_DATA_MAP
 from objectstore.objectstore import ObjectStore
 from sql_utils.sql_utils import SQLRunner, createdb
 
@@ -175,7 +175,7 @@ def get_basiskaart(object_store_name, name, tmpdir, prefix, importnames,
 
 def process_basiskaart(kbk_name):
     for object_store_name, tmpdir, path, prefix, importnames, schema, endswith \
-            in VALUES[kbk_name]:
+            in SOURCE_DATA_MAP[kbk_name]:
         max_extra_dir_nr = get_basiskaart(object_store_name, path, tmpdir,
                                           prefix, importnames, endswith)
 
