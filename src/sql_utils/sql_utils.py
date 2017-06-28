@@ -7,12 +7,24 @@ import subprocess
 import psycopg2
 import psycopg2.extensions
 
+from multiprocessing import Pool
+
 from basiskaart import basiskaart_setup as bs
 
 DATABASE = bs.DATABASE
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
+
+
+def parallelize(importjob, tasks, processes):
+    """
+    Call `importjob` for each file in `tasks`, using
+    up to `processes` parallel processes.
+    Wait for them all to complete.
+    """
+    Pool(processes).starmap(importjob, tasks, chunksize=1)
+    return
 
 
 class SQLRunner(object):
@@ -26,9 +38,22 @@ class SQLRunner(object):
         self.dbname = dbname
         self.user = user
         self.password = password
+        self.conn = None
+
+    def connect(self):
+        """
+        Create connection
+        """
+
         self.conn = psycopg2.connect(
             "host={} port={} dbname={} user={}  password={}".format(
-                host, port, dbname, user, password))
+                self.host, self.port,
+                self.dbname, self.user, self.password))
+
+    def clone(self):
+        return SQLRunner(
+            self.host, self.port, self.dbname, self.user,
+            self.password)
 
     def commit(self):
         self.conn.commit()
@@ -42,6 +67,9 @@ class SQLRunner(object):
         :param script:
         :return:
         """
+        if not self.conn:
+            self.connect()
+
         self.conn.set_isolation_level(
             psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
         dbcur = self.conn.cursor()
@@ -56,12 +84,19 @@ class SQLRunner(object):
             raise Exception(e)
 
     def rename_column(self, table, column_from, column_to):
+
+        if not self.conn:
+            self.connect()
+
         query = 'ALTER TABLE {} RENAME COLUMN "{}" TO "{}"'.format(
             table, column_from, column_to)
         dbcur = self.conn.cursor()
         dbcur.execute(query)
 
     def get_columns_from_table(self, table):
+        if not self.conn:
+            self.connect()
+
         dbcur = self.conn.cursor()
         try:
             dbcur.execute("SELECT * FROM {} WHERE 1=0".format(table))
@@ -71,6 +106,10 @@ class SQLRunner(object):
             return []
 
     def gettables_in_schema(self, schema):
+
+        if not self.conn:
+            self.connect()
+
         query = """ SELECT * FROM information_schema.tables
                     WHERE table_schema = %s"""
         dbcur = self.conn.cursor()
@@ -78,6 +117,10 @@ class SQLRunner(object):
         return dbcur.fetchall()
 
     def table_exists(self, schema, table):
+
+        if not self.conn:
+            self.connect()
+
         query = """SELECT EXISTS( SELECT 1 FROM pg_tables
                     WHERE schemaname = (%s) AND
                           tablename = (%s)
@@ -94,51 +137,75 @@ class SQLRunner(object):
         """
         return self.run_sql(open(script_name, 'r', encoding="utf-8").read())
 
-    def get_ogr2_ogr_login(self, schema, dbname):
-        log.info(
-            'Logging into %s:%s db %s.%s',
-            self.host, self.port, dbname, schema)
-
-        return "host={} port={} ACTIVE_SCHEMA={} user={} " \
-               "dbname={} password={}".format(self.host, self.port,
-                                              schema, self.user, dbname,
-                                              self.password)
-
     def import_basiskaart(self, path_to_shp, schema):
         os.putenv('PGCLIENTENCODING', 'UTF8')
 
         log.info('import schema %s in %s', path_to_shp, schema)
 
+        tasks = []
+
         for root, dirs, files in os.walk(path_to_shp, topdown=False):
             log.info('Processing %s with dirs %s', root, dirs)
             for filename in files:
-                self.process_file(filename, schema, root)
+                if os.path.isdir(filename):
+                    continue
+                sqldata = self.clone()
+                tasks.append((sqldata, filename, schema, root))
+                # process_shp_file(self, filename, schema, root)
 
-    def process_file(self, filename, schema, root):
+        parallelize(process_shp_file, tasks, 4)
+        # wait for the tasks to finish..
+        # pool.join()
 
-        filename, filetype = os.path.splitext(filename)
-        if filetype == '.shp':
-            appendtext = ''
-            if self.table_exists(schema, filename):
-                appendtext = '-append'
-            log.info('Importing %s', root + '/' + filename)
-            self.run_subprocess_ogr(appendtext, schema, root, filename)
+    def get_ogr2_ogr_login(self, schema, dbname):
+        log.info(
+            'Logging into %s:%s db %s.%s',
+            self.host, self.port, dbname, schema)
 
-    def run_subprocess_ogr(self, appendtext, schema, root, filename):
-        """
-        OGR subprocess
-        """
-        subprocess.call(
-            'ogr2ogr -nlt PROMOTE_TO_MULTI -progress '
-            '-skipfailures {APND} -f "PostgreSQL" '
-            'PG:"{PG}" -gt 655360 -s_srs "EPSG:28992" -t_srs '
-            '"EPSG:28992" {LCO} {CONF} {FNAME}'.format(
-                PG=self.get_ogr2_ogr_login(schema, 'basiskaart'),
-                LCO='-lco SPATIAL_INDEX=OFF -lco PRECISION=NO -lco '
-                    'LAUNDER=NO -lco GEOMETRY_NAME=geom',
-                CONF='--config PG_USE_COPY YES',
-                FNAME=root + '/' + filename,
-                APND=appendtext), shell=True)
+        return "host={} port={} active_schema={} user={} " \
+               "dbname={} password={}".format(self.host, self.port,
+                                              schema, self.user, dbname,
+                                              self.password)
+
+
+def process_shp_file(sql, filename, schema, root):
+    """
+    load shapre file into database
+    """
+    filename, filetype = os.path.splitext(filename)
+    if filetype == '.shp':
+        appendtext = ''
+        if sql.table_exists(schema, filename):
+            appendtext = '-append'
+
+        log.info('Importing %s/%s%s', root, filename, filetype)
+        run_subprocess_ogr(sql, appendtext, schema, root, filename)
+
+
+def run_subprocess_ogr(sql, appendtext, schema, root, filename):
+    """
+    OGR subprocess
+
+    *NOTE* *IGNORE THIS WARNING*
+
+    PQconnectdb failed: invalid connection option "active_schema"
+
+    """
+    command = (
+        'ogr2ogr -nlt PROMOTE_TO_MULTI -progress '
+        '-skipfailures {APND} -f "PostgreSQL" '
+        'PG:"{PG}" -gt 655360 -s_srs "EPSG:28992" -t_srs '
+        '"EPSG:28992" {LCO} {CONF} {FNAME}'.format(
+            PG=sql.get_ogr2_ogr_login(schema, 'basiskaart'),
+            LCO='-lco SPATIAL_INDEX=OFF -lco PRECISION=NO -lco '
+                'LAUNDER=NO -lco GEOMETRY_NAME=geom',
+            CONF='--config PG_USE_COPY YES',
+            FNAME=root + '/' + filename + '.shp',
+            APND=appendtext)
+    )
+
+    # log.debug(command)
+    subprocess.call(command, shell=True)
 
 
 def createdb():

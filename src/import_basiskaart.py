@@ -17,7 +17,7 @@ parser.add_argument(
     action='store',
     default='all',
     help='Select which basiskaart to import',
-    choices=['all', 'kbk10', 'kbk50', 'bgt'])
+    choices=['all', 'kbk10', 'kbk25', 'kbk50', 'bgt'])
 parser.add_argument(
     '--no_views',
     action='store_true',
@@ -28,14 +28,32 @@ parser.add_argument(
     action='store_true',
     default=False,
     help='Only generrate views')
+
+parser.add_argument(
+    '--listsourcefiles',
+    action='store_true',
+    default=False,
+    help='list objectstore source files')
+
 args = parser.parse_args()
 
-if __name__ == '__main__':
-    LOG.info(" Basiskaart bouw gestart voor %s", args.basiskaart)
+
+def handle_import(args):
+
+    if args.listsourcefiles:
+        process_basiskaart(args.basiskaart, list_source_files=True)
+        return
+
     if not args.viewsonly:
         process_basiskaart(args.basiskaart)
+        create_indexes()
+
     if not args.no_views and (
             'bgt' in args.basiskaart or 'all' in args.basiskaart):
         LOG.info(" Views voor basiskaart worden gebouwd")
         create_views_based_on_workbook()
-    create_indexes()
+        create_indexes()
+
+if __name__ == '__main__':
+    LOG.info(" Basiskaart bouw gestart voor %s", args.basiskaart)
+    handle_import(args)

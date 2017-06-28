@@ -68,10 +68,12 @@ class ObjectStore:
             self._get_full_container_list(seed, **kwargs)
 
     def folders(self, path):
-        objects_from_store = self._get_full_container_list([], delimiter='/',
-                                                           prefix=path)
-        return [store_object['subdir'] for store_object in objects_from_store if
-                'subdir' in store_object]
+        objects_from_store = self._get_full_container_list(
+            [], delimiter='/', prefix=path)
+
+        return [
+            store_object['subdir'] for store_object in objects_from_store if
+            'subdir' in store_object]
 
     def files(self, path, file_id):
         file_list = self._get_full_container_list(

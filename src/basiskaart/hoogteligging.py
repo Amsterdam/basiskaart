@@ -22,33 +22,43 @@ def create_views_based_on_workbook():
 
 
 def read_workbook():
+    """
+    excel workbook
+    """
     view_definitions = {}
     wb = load_workbook(XLS_VIEWDEF)
     startvalue = 1
     tables_unavailable = 0
     for idx, row in enumerate(wb['Blad1'].rows):
-        schema, tabel, categorie, geotype, viewnm, vwattr, laag, grp, minhoogte, maxhoogte = [
-            r.value for r in row
-        ]
 
-        if idx >= startvalue:
-            viewname = '"{}"."{}_{}<hoogteligging>"'.format(schema.lower(),
-                                                            categorie, geotype)
-            if sql.table_exists(schema.lower(), tabel):
-                if viewname not in view_definitions:
-                    view_definitions[viewname] = []
-                view_definitions[viewname] += [
-                    [schema.lower(), tabel, vwattr, minhoogte, maxhoogte]]
-            else:
-                tables_unavailable += 1
-                if tables_unavailable > MAX_NR_OF_UNAVAILABLE_TABLES:
-                    raise Exception(
-                        'More than {MAX_NR_OF_UNAVAILABLE_TABLES} unavailable tables, input is unreliable!')
-                log.warning(
-                    "Table {} in view {} does not exist, "
-                    "processing continues".format(
-                        tabel,
-                        viewname))
+        schema, tabel, categorie, geotype, viewnm, vwattr, \
+            laag, grp, minhoogte, maxhoogte = [
+                r.value for r in row
+            ]
+
+        if not idx >= startvalue:
+            continue
+
+        viewname = '"{}"."{}_{}<hoogteligging>"'.format(schema.lower(),
+                                                        categorie, geotype)
+        if sql.table_exists(schema.lower(), tabel):
+            if viewname not in view_definitions:
+                view_definitions[viewname] = []
+            view_definitions[viewname] += [
+                [schema.lower(), tabel, vwattr, minhoogte, maxhoogte]]
+        else:
+            tables_unavailable += 1
+
+            if tables_unavailable > MAX_NR_OF_UNAVAILABLE_TABLES:
+                raise Exception("""
+                    'More than {MAX_NR_OF_UNAVAILABLE_TABLES} unavailable
+                    'tables, input is unreliable!""")
+
+            log.warning(
+                "Table {} in view {} does not exist, "
+                "processing continues".format(
+                    tabel,
+                    viewname))
 
     return view_definitions
 
@@ -62,11 +72,12 @@ def create_view(view_definitions):
 def build_view_per_name(viewname, viewdef, minvalue, maxvalue):
     new_viewdef = []
     for schema, tabel, vwattr, minval, maxval in viewdef:
-        new_viewdef.append([schema,
-                            tabel,
-                            define_fields(tabel, schema, vwattr),
-                            minvalue,
-                            maxvalue])
+        new_viewdef.append([
+            schema,
+            tabel,
+            define_fields(tabel, schema, vwattr),
+            minvalue,
+            maxvalue])
 
     create_views(viewname, new_viewdef, minvalue, maxvalue)
 
@@ -100,19 +111,24 @@ def create_views(viewname, viewdef, minvalue, maxvalue):
             selects.append(
                 single_select.format(vwattr, schema, tabel, hoogte))
 
-        real_viewname = viewname.replace('<hoogteligging>',
-                                         str(hoogte).replace('-', '_'))
+        real_viewname = viewname.replace(
+            '<hoogteligging>', str(hoogte).replace('-', '_'))
         try:
-            sql.run_sql(viewstmt.format(real_viewname, real_viewname, " UNION ".join(selects)))
+            sql.run_sql(
+                viewstmt.format(
+                    real_viewname, real_viewname, " UNION ".join(selects)))
         except:
-            log.info("Exception while creating materialized view: {}".format(real_viewname))
+            log.info(
+                "Exception while creating materialized view: %s",
+                real_viewname)
 
 
 def create_table_indexes(schema, table, columns):
     """
     create table and geometrie index
     """
-    log.info("Create GEO indexes and cluster table for {schema}.{table}".format(schema=schema, table=table))
+    log.info("Create GEO indexes for %s.%s", schema, table)
+
     if 'geometrie' in columns:
         s = """
         SET SEARCH_PATH TO {schema};
@@ -123,6 +139,7 @@ def create_table_indexes(schema, table, columns):
         """.format(schema=schema, table=table, table_lower=table.lower())
 
         sql.run_sql(s)
+
     # create field indexes
     for column in columns:
         log.info("Create column index on {table} for {column}".format(table=table, column=column))
