@@ -1,24 +1,17 @@
-FROM ubuntu:latest
-# deze wordt gebruikt omdat er een late versie van gdal-bin gesupport wordt, deze in niet aanwezig in debian wheezy
-# met python3.6
+FROM amsterdam/docker_python:latest
 
-RUN apt-get update \
-	&& apt-get install -y \
-        python3 \
-        python3-dev \
-        python3-pip \
-        libpq-dev \
-        gdal-bin \
-		postgresql-client \
-		netcat \
-	&& apt-get clean \
-	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-	&& adduser --system datapunt
+#RUN add-apt-repository ppa:ubuntugis/ppa
+
+
+
 
 WORKDIR /app
 
+
 COPY . /app/
 COPY .jenkins/import /.jenkins-import/
+
+RUN /app/buildgdal.sh
 
 RUN chown -R datapunt: /app \
     && pip3 install --no-cache-dir -r requirements.txt

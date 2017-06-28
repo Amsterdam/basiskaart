@@ -39,7 +39,7 @@ def test_kbk10():
     shutil.copytree(
         os.path.dirname(os.path.realpath(__file__)) + '/fixtures/kbk10',
         temp_directory + '/1')
-    fill_basiskaart(temp_directory, 'kbk10', 1)
+    fill_basiskaart(temp_directory, 'kbk10')
 
     checkcolumns = ('ogc_fid', 'geom', 'WDL_bre_ID', 'AREA')
     checktable('kbk10."WDL_breed_water"', checkcolumns)
@@ -55,7 +55,7 @@ def test_kbk50():
     shutil.copytree(
         os.path.dirname(os.path.realpath(__file__)) + '/fixtures/kbka50',
         temp_directory + '/1')
-    fill_basiskaart(temp_directory, 'kbk50', 1)
+    fill_basiskaart(temp_directory, 'kbk50')
 
     checkcolumns = ('ogc_fid', 'geom', 'KRT_A_w_ID', 'AREA')
     checktable('kbk50."KRT_A_wegnummer_bord"', checkcolumns)
@@ -71,7 +71,7 @@ def test_bgt():
     shutil.copytree(
         os.path.dirname(os.path.realpath(__file__)) + '/fixtures/bgt',
         temp_directory + '/1')
-    fill_basiskaart(temp_directory, 'bgt', 1)
+    fill_basiskaart(temp_directory, 'bgt')
     checkcolumns = (
         'ogc_fid', 'geometrie', 'identificatie_namespace',
         'identificatie_lokaalid', 'objectbegintijd', 'objecteindtijd',

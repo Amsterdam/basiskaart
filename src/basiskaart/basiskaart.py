@@ -211,6 +211,7 @@ def unzip_source_file(store, metafile, extra_shapedir):
 
     log.info("make a zip metafile from: %s", metafile['name'])
     inzip = zipfile.ZipFile(content)
+    del content
 
     log.info("Extract %s to temp directory %s",
              metafile['name'], extra_shapedir)
