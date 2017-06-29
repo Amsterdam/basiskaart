@@ -146,6 +146,31 @@ def clear_output_dir(shapedir):
         log.info("Removed %s", shapedir)
 
 
+def is_name_match(metafile, matchpatterns, endswith):
+    """
+    If filepath matches with file name conditions
+    """
+
+    filepath = os.path.split(metafile['name'])
+
+    if len(filepath) != 2:
+        return False
+
+    for name_match in matchpatterns:
+
+        if name_match not in filepath:
+            return False
+
+        if not filepath.endswith(endswith):
+            return False
+
+        log.info(
+            "\n Match %s from objectstore: %s \n",
+            name_match, metafile['name'])
+
+        return True
+
+
 def extract_source_files_basiskaart(
         object_store_name, name, shapedir, prefix,
         matchpatterns, endswith, list_source_files=False):
@@ -172,31 +197,18 @@ def extract_source_files_basiskaart(
 
     for metafile in dir_listing:
         # log.info("Found in objectstore: " + metafile['name'])
-        fsplit = os.path.split(metafile['name'])
 
-        if len(fsplit) != 2:
+        if not is_name_match(metafile, matchpatterns, endswith):
             continue
 
-        for name_match in matchpatterns:
+        # store this on disk..
+        # and skip if already there..
+        if list_source_files:
+            continue
 
-            if name_match not in fsplit[1]:
-                continue
-
-            if not fsplit[1].endswith(endswith):
-                continue
-
-            log.info(
-                "\n Match %s from objectstore: %s \n",
-                name_match, metafile['name'])
-
-            # store this on disk..
-            # and skip if already there..
-            if list_source_files:
-                continue
-
-            extra_dir_nr += 1
-            extra_shapedir = os.path.join(shapedir, str(extra_dir_nr))
-            unzip_source_file(store, metafile, extra_shapedir)
+        extra_dir_nr += 1
+        extra_shapedir = os.path.join(shapedir, str(extra_dir_nr))
+        unzip_source_file(store, metafile, extra_shapedir)
 
     # check if we actualy downloaded something
     if extra_dir_nr == 0 and not list_source_files:
