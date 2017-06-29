@@ -6,7 +6,8 @@ import argparse
 import logging
 
 from basiskaart.basiskaart import process_basiskaart
-from basiskaart.hoogteligging import create_views_based_on_workbook, create_indexes
+from basiskaart.hoogteligging import create_views_based_on_workbook
+from basiskaart.hoogteligging import create_indexes
 
 LOG = logging.getLogger(__name__)
 
@@ -41,14 +42,17 @@ args = parser.parse_args()
 def handle_import(args):
 
     if args.listsourcefiles:
+        # show which zip files will be downloaded.
         process_basiskaart(args.basiskaart, list_source_files=True)
         return
 
     if not args.viewsonly:
+        # import specific dataset
         process_basiskaart(args.basiskaart)
         create_indexes()
 
     if not args.no_views and (
+        # import everything
             'bgt' in args.basiskaart or 'all' in args.basiskaart):
         LOG.info(" Views voor basiskaart worden gebouwd")
         create_views_based_on_workbook()
