@@ -6,3 +6,6 @@ cd gdal-2.2.0/
 make
 make install
 
+ldconfig
+
+ln -s /usr/lib/libproj.so.0 /usr/lib/libproj.so
