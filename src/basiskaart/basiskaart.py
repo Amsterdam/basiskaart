@@ -156,13 +156,15 @@ def is_name_match(metafile, matchpatterns, endswith):
     if len(filepath) != 2:
         return False
 
+    filepath = filepath[1]
+
     for name_match in matchpatterns:
 
         if name_match not in filepath:
-            return False
+            continue
 
         if not filepath.endswith(endswith):
-            return False
+            continue
 
         log.info(
             "\n Match %s from objectstore: %s \n",
@@ -196,7 +198,8 @@ def extract_source_files_basiskaart(
     extra_dir_nr = 0
 
     for metafile in dir_listing:
-        # log.info("Found in objectstore: " + metafile['name'])
+
+        #log.info("Found in objectstore: " + metafile['name'])
 
         if not is_name_match(metafile, matchpatterns, endswith):
             continue
