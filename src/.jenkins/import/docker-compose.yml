@@ -20,7 +20,7 @@ services:
       DATABASE_PORT_OVERRIDE: 5432
     command: >
       bash -c "/app/.jenkins/docker-wait.sh \
-              && python3 /app/import_basiskaart.py"
+              && python /app/import_basiskaart.py"
 
   db-backup:
     image: build.datapunt.amsterdam.nl:5000/atlas/postgres
