@@ -199,7 +199,7 @@ def extract_source_files_basiskaart(
 
     for metafile in dir_listing:
 
-        #log.info("Found in objectstore: " + metafile['name'])
+        # log.info("Found in objectstore: " + metafile['name'])
 
         if not is_name_match(metafile, matchpatterns, endswith):
             continue
