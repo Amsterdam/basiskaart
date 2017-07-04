@@ -34,6 +34,7 @@ services:
               && pg_dump --clean \
                           -Fc \
                           -n kbk10 \
+                          -n kbk25 \
                           -n kbk50 \
                           -n bgt \
                           -U basiskaart \
