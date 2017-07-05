@@ -73,6 +73,7 @@ class SQLRunner(object):
         self.conn.set_isolation_level(
             psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
         dbcur = self.conn.cursor()
+
         try:
             dbcur.execute(script)
             if dbcur.rowcount > 0:
@@ -82,6 +83,17 @@ class SQLRunner(object):
         except psycopg2.DatabaseError as e:
             log.debug("Database script exception: :%s", str(e))
             raise Exception(e)
+
+    def run_sql_no_results(self, script):
+
+        log.debug(script)
+
+        if not self.conn:
+            self.connect()
+
+        dbcur = self.conn.cursor()
+
+        dbcur.execute(script)
 
     def rename_column(self, table, column_from, column_to):
 
@@ -98,20 +110,28 @@ class SQLRunner(object):
             self.connect()
 
         dbcur = self.conn.cursor()
-        try:
-            dbcur.execute("SELECT * FROM {} WHERE 1=0".format(table))
-            return [desc[0] for desc in dbcur.description]
-        except ValueError:
-            # HMM... catch all..
-            return []
+        dbcur.execute("SELECT * FROM {} WHERE 1=0".format(table))
+        return [desc[0] for desc in dbcur.description]
 
-    def gettables_in_schema(self, schema):
+    def get_tables_in_schema(self, schema):
 
         if not self.conn:
             self.connect()
 
         query = """ SELECT * FROM information_schema.tables
                     WHERE table_schema = %s"""
+        dbcur = self.conn.cursor()
+        dbcur.execute(query, (schema, ))
+
+        return dbcur.fetchall()
+
+    def get_views_in_schema(self, schema):
+
+        if not self.conn:
+            self.connect()
+
+        query = """SELECT * FROM pg_catalog.pg_matviews
+                   WHERE schemaname = %s"""
         dbcur = self.conn.cursor()
         dbcur.execute(query, (schema, ))
         return dbcur.fetchall()
@@ -121,12 +141,14 @@ class SQLRunner(object):
         if not self.conn:
             self.connect()
 
-        query = """SELECT EXISTS( SELECT 1 FROM pg_tables
-                    WHERE schemaname = (%s) AND
-                          tablename = (%s)
+        query = f"""SELECT EXISTS( SELECT 1 FROM pg_tables
+                    WHERE schemaname = '{schema}' AND
+                          tablename = '{table}'
             );"""
+
         dbcur = self.conn.cursor()
-        dbcur.execute(query, (schema, table))
+        dbcur.execute(query)
+
         return dbcur.fetchone()[0]
 
     def run_sql_script(self, script_name) -> list:
@@ -204,7 +226,6 @@ def run_subprocess_ogr(sql, appendtext, schema, root, filename):
             APND=appendtext)
     )
 
-    # log.debug(command)
     subprocess.call(command, shell=True)
 
 

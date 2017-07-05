@@ -22,6 +22,7 @@ def test_hoogteview():
     shutil.copytree(
         os.path.dirname(os.path.realpath(__file__)) + '/fixtures/views',
         tmpdir + '/1')
+
     fill_basiskaart(tmpdir, 'bgt')
 
     create_views_based_on_workbook()

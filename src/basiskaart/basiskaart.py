@@ -75,7 +75,7 @@ def count_shapes(extra_shapedir, counters):
 
 
 def count_rows_in_tables(schema, counters):
-    tables = sql.gettables_in_schema(schema)
+    tables = sql.get_tables_in_schema(schema)
     for tab_info in tables:
         table_name = tab_info[2]
         cnt = sql.run_sql(f'select count(*) from "{schema}"."{table_name}"')
@@ -126,7 +126,7 @@ def fill_basiskaart(shape_dir, schema):
 
 
 def renamefields():
-    tables_in_schema = sql.gettables_in_schema('bgt')
+    tables_in_schema = sql.get_tables_in_schema('bgt')
     for t in tables_in_schema:
         table = '"bgt"."{}"'.format(t[2])
         columns = sql.get_columns_from_table(table)

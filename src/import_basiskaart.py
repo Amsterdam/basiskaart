@@ -36,27 +36,38 @@ parser.add_argument(
     default=False,
     help='list objectstore source files')
 
+parser.add_argument(
+    '--createindexes',
+    action='store_true',
+    default=False,
+    help='create indexes on geometrie')
+
 args = parser.parse_args()
 
 
-def handle_import(args):
+def handle_import(userargs):
 
-    if args.listsourcefiles:
+    if userargs.listsourcefiles:
         # show which zip files will be downloaded.
-        process_basiskaart(args.basiskaart, list_source_files=True)
+        process_basiskaart(userargs.basiskaart, list_source_files=True)
         return
 
-    if not args.viewsonly:
-        # import specific dataset
-        process_basiskaart(args.basiskaart)
+    if userargs.createindexes:
         create_indexes()
+        return
 
-    if not args.no_views and (
-        # import everything
-            'bgt' in args.basiskaart or 'all' in args.basiskaart):
+    if userargs.viewsonly:
+        create_views_based_on_workbook()
+        return
+
+    if not userargs.no_views and (
+            'bgt' in userargs.basiskaart or 'all' in userargs.basiskaart):
+        # import specific dataset
         LOG.info(" Views voor basiskaart worden gebouwd")
+        process_basiskaart(userargs.basiskaart)
         create_views_based_on_workbook()
         create_indexes()
+
 
 if __name__ == '__main__':
     LOG.info(" Basiskaart bouw gestart voor %s", args.basiskaart)
