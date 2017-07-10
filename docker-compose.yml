@@ -1,4 +1,4 @@
-version: '2.1'
+version: '3.0'
 services:
   database:
     image: build.datapunt.amsterdam.nl:5000/atlas/postgres
@@ -15,9 +15,9 @@ services:
       - database
     environment:
       SECRET_KEY: hoi
-      DB_NAME: basiskaart
-      DB_USER: basiskaart
-      DB_PASSWORD: insecure
+      DATABASE_NAME: basiskaart
+      DATABASE_USER: basiskaart
+      DATABASE_PASSWORD: insecure
       BAG_OBJECTSTORE_PASSWORD: ${BAG_OBJECTSTORE_PASSWORD}
       BGT_OBJECTSTORE_PASSWORD: ${BGT_OBJECTSTORE_PASSWORD}
     command: >
