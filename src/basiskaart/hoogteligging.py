@@ -246,6 +246,8 @@ def create_indexes():
         make_geoindexes_on_all_matviews(schema)
 
 
+# Keep track of columns, views and counts to
+# be able to report errors..
 COLUMN_VIEW_TRACKER = {}
 COLUMN_LEN_TRACKER = {}
 
