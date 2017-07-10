@@ -55,6 +55,7 @@ def validate_workbook():
 
     for idx, row in enumerate(wb['Blad1'].rows):
 
+        # skip header lines
         if not idx >= startvalue:
             continue
 
@@ -68,10 +69,14 @@ def validate_workbook():
 
         viewname = f'"{schema_lower}"."{categorie}_{geotype}<hoogteligging>"'
 
+        log.debug(viewname)
+
         if sql.table_exists(schema_lower, table):
 
-            if table not in validated_view_definitions:
+            if viewname not in validated_view_definitions:
                 validated_view_definitions[viewname] = []
+
+            validate_columns(viewname, schema_lower, table, viewattr)
 
             validated_view_definitions[viewname].append([
                 schema_lower, table, [viewattr]
@@ -103,7 +108,7 @@ def high_lowvalue(viewdef):
     selects = []
     single_select = 'SELECT relatievehoogteligging FROM "{}"."{}"'
 
-    for schema, table, columnnames in viewdef:
+    for schema, table, _columnnames in viewdef:
         selects.append(single_select.format(schema, table))
 
     unionselect = ' UNION '.join(selects)
@@ -239,6 +244,46 @@ def create_indexes():
     for schema in ['kbk10', 'kbk25', 'kbk50', 'bgt']:
         make_indexes_on_all_tables(schema)
         make_geoindexes_on_all_matviews(schema)
+
+
+COLUMN_VIEW_TRACKER = {}
+COLUMN_LEN_TRACKER = {}
+
+
+def validate_columns(viewname, schema, table, columnnames):
+    """
+    Check if column names defined in xls sheet do actualy
+    exists and have equal amount of columns on all unionized tables
+    """
+
+    sql_table_name = '"{}"."{}"'.format(schema, table)
+    found_columns = sql.get_columns_from_table(sql_table_name)
+
+    columns_in_xls = [
+        field.strip() for field in columnnames.split(',')]
+
+    table_key = f'{schema}.{table}'
+    len_columns = len(columns_in_xls)
+
+    if table_key not in COLUMN_LEN_TRACKER:
+        COLUMN_LEN_TRACKER[table_key] = len_columns
+        COLUMN_VIEW_TRACKER[table_key] = columns_in_xls
+
+    if len_columns != COLUMN_LEN_TRACKER[table_key]:
+        raise ValueError(
+            "WRONG NUMBER OF COLUMNS:",
+            viewname,
+            len_columns, COLUMN_LEN_TRACKER[table_key],
+            COLUMN_VIEW_TRACKER[table_key],
+            schema, table, columns_in_xls)
+
+    for needed_column in columns_in_xls:
+        if needed_column == 'null':
+            continue
+        if needed_column not in found_columns:
+            raise ValueError(
+                "WRONG COLUMNS:",
+                schema, table, columnnames)
 
 
 def define_fields(tabel, schema, vwattr):
