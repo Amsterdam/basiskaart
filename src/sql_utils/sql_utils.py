@@ -28,6 +28,11 @@ def parallelize(importjob, tasks, processes):
 
 
 class SQLRunner(object):
+    """
+    A homebrew sql executing class
+    because using a proper ORM is not handy.
+    ( I do not approve..)
+    """
     def __init__(self, host=DATABASE['HOST'],
                  port=DATABASE['PORT'],
                  dbname=DATABASE['NAME'],
