@@ -81,7 +81,7 @@ def test_create_indexes():
         AND indexname LIKE '%_gist';
         """
     )
-    assert len(indexen) == 21
+    assert len(indexen) == 17
 
     for row in indexen:
         assert row[0] in table_and_view_names

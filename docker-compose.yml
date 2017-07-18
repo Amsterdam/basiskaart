@@ -22,4 +22,4 @@ services:
       BGT_OBJECTSTORE_PASSWORD: ${BGT_OBJECTSTORE_PASSWORD}
     command: >
       bash -c "/app/.jenkins/docker-wait.sh \
-              && python3 ./import_basiskaart.py"
+              && python ./import_basiskaart.py"
