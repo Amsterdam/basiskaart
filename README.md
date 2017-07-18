@@ -29,14 +29,14 @@ Het script tolereert ontbrekende tabellen en kolommen in de shape tabellen.
     dus je docker runner heeft >3 GB memory nodig.
     
 
-    # run database import
-    export BAG_OBJECTSTORE_PASSWORD=xxxx
-    export BGT_OBJECTSTORE_PASSWORD=xxxx
-	docker-compose up -d --build 
-	
-	#show log
-    docker-compose logs -f importer
-    
+ ### run database import
+- export BAG_OBJECTSTORE_PASSWORD=xxxx
+- export BGT_OBJECTSTORE_PASSWORD=xxxx
+- docker-compose up -d --build
+
+### show log
+- docker-compose logs -f importer
 
 ### run tests
-    docker-compose run importer pytest
+- docker-compose run importer pytest
+
