@@ -19,5 +19,5 @@ services:
       DATABASE_PASSWORD: insecure
     command: >
       bash -c "/app/docker-wait.sh \
-              && ./docker-code-check.sh \
-              && ./docker-test.sh"
+              && flake8 --config=/app/flake.cfg /app/basiskaart \
+              && pytest"
