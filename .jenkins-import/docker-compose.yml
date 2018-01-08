@@ -1,0 +1,25 @@
+version: '3.0'
+services:
+  database:
+    image: amsterdam/postgres
+    environment:
+      POSTGRES_PASSWORD: insecure
+      POSTGRES_USER: basiskaart
+    volumes:
+      - ./backups:/tmp/backups
+
+  importer:
+#    image: build.datapunt.amsterdam.nl:5000/datapunt/basiskaart:${ENVIRONMENT}
+    build: ..
+    links:
+      - database
+    environment:
+      DATABASE_NAME: basiskaart
+      DATABASE_USER: basiskaart
+      DATABASE_PASSWORD: insecure
+      BAG_OBJECTSTORE_PASSWORD:
+      BGT_OBJECTSTORE_PASSWORD:
+      DATABASE_HOST_OVERRIDE: database
+      DATABASE_PORT_OVERRIDE: 5432
+    command: >
+      bash -c "./docker-import-db.sh"

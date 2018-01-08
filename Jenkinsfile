@@ -24,17 +24,17 @@ node {
 
     stage('Test') {
         tryStep "test", {
-            sh "docker-compose -p basiskaart -f src/.jenkins/test/docker-compose.yml pull && " +
-               "docker-compose -p basiskaart -f src/.jenkins/test/docker-compose.yml build && " +
-               "docker-compose -p basiskaart -f src/.jenkins/test/docker-compose.yml run -u root --rm tests"
+            sh "docker-compose -p basiskaart -f .jenkins-test/docker-compose.yml pull && " +
+               "docker-compose -p basiskaart -f .jenkins-test/docker-compose.yml build && " +
+               "docker-compose -p basiskaart -f .jenkins-test/docker-compose.yml run -u root --rm tests"
         }, {
-            sh "docker-compose -p basiskaart -f src/.jenkins/test/docker-compose.yml down"
+            sh "docker-compose -p basiskaart -f .jenkins-test/docker-compose.yml down"
         }
     }
 
     stage("Build image") {
         tryStep "build", {
-            def image = docker.build("build.datapunt.amsterdam.nl:5000/datapunt/basiskaart:${env.BUILD_NUMBER}", "src")
+            def image = docker.build("build.datapunt.amsterdam.nl:5000/datapunt/basiskaart:${env.BUILD_NUMBER}")
             image.push()
         }
     }

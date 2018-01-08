@@ -24,17 +24,14 @@ RUN python3.6 get-pip.py
 
 WORKDIR /app
 
-
-COPY . /app/
-
-COPY .jenkins/import /.jenkins-import/
-
-RUN chown -R datapunt /app
-
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.6 10
 
-RUN pip install --upgrade pip
-RUN pip install setuptools
-RUN pip install -r requirements.txt
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+COPY src /app/
+
+COPY .jenkins-import /.jenkins-import/
+
+RUN chown -R datapunt /app
 
 USER datapunt
