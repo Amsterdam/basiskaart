@@ -19,6 +19,5 @@ services:
       DATABASE_PASSWORD: insecure
     command: >
       bash -c "/app/docker-wait.sh \
-              && cd .jenkins-test/  \
               && ./docker-code-check.sh \
               && ./docker-test.sh"
