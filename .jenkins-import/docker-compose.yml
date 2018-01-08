@@ -9,8 +9,7 @@ services:
       - ./backups:/tmp/backups
 
   importer:
-#    image: build.datapunt.amsterdam.nl:5000/datapunt/basiskaart:${ENVIRONMENT}
-    build: ..
+    image: build.datapunt.amsterdam.nl:5000/datapunt/basiskaart:${ENVIRONMENT}
     links:
       - database
     environment:
