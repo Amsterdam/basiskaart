@@ -21,4 +21,4 @@ services:
       DATABASE_HOST_OVERRIDE: database
       DATABASE_PORT_OVERRIDE: 5432
     command: >
-      bash -c "./docker-import-db.sh"
+      bash -c "/.jenkins-import/docker-import-db.sh"

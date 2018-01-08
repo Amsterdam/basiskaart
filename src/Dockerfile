@@ -26,11 +26,12 @@ WORKDIR /app
 
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.6 10
 
+# CI hook - see .jenkins/README.TXT
+COPY .jenkins/import /.jenkins-import/
+
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
-COPY src /app/
-
-COPY .jenkins-import /.jenkins-import/
+COPY . /app/
 
 RUN chown -R datapunt /app
 

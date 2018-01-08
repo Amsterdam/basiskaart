@@ -8,7 +8,7 @@ services:
       POSTGRES_DB: basiskaart
 
   tests:
-    build: ..
+    build: ../../
     links:
       - database
     environment:
@@ -18,6 +18,7 @@ services:
       DATABASE_NAME: basiskaart
       DATABASE_PASSWORD: insecure
     command: >
-      bash -c "/app/docker-wait.sh \
-              && flake8 --config=/app/flake.cfg /app/basiskaart \
-              && pytest"
+      bash -c "/app/.jenkins/import/docker-wait.sh \
+              && cd /app/.jenkins/test/ \
+              && ./docker-code-check.sh \
+              && ./docker-test.sh"

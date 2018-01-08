@@ -20,7 +20,7 @@ dc pull
 dc build
 
 dc up -d database
-dc run importer ./docker-wait.sh
+dc run importer /.jenkins-import/docker-wait.sh
 
 echo "Starting Postgres importer"
 dc run --rm importer
