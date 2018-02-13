@@ -136,7 +136,7 @@ KBK25 = (
 )
 
 BGT = (
-    'basiskaart', '/app/basiskaartdata/bgt', 'BGT_Totaal/Esri_Shape',
+    'basiskaart', '/app/basiskaartdata/bgt', 'Basiskaart',
     'BGT',
     ['Esri_Shape_totaal'],
     '-latest.zip',
