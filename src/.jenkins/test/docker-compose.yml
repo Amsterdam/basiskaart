@@ -1,14 +1,14 @@
 version: '3.0'
 services:
   database:
-    image: build.datapunt.amsterdam.nl:5000/atlas/postgres
+    image: amsterdam/postgres
     environment:
       POSTGRES_PASSWORD: insecure
       POSTGRES_USER: basiskaart
       POSTGRES_DB: basiskaart
 
   tests:
-    build: ../..
+    build: ../../
     links:
       - database
     environment:
@@ -18,7 +18,7 @@ services:
       DATABASE_NAME: basiskaart
       DATABASE_PASSWORD: insecure
     command: >
-      bash -c "/app/.jenkins/docker-wait.sh \
-              && cd /app/.jenkins/test/  \
+      bash -c "/app/.jenkins/import/docker-wait.sh \
+              && cd /app/.jenkins/test/ \
               && ./docker-code-check.sh \
               && ./docker-test.sh"

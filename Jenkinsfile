@@ -24,7 +24,8 @@ node {
 
     stage('Test') {
         tryStep "test", {
-            sh "docker-compose -p basiskaart -f src/.jenkins/test/docker-compose.yml build && " +
+            sh "docker-compose -p basiskaart -f src/.jenkins/test/docker-compose.yml pull && " +
+               "docker-compose -p basiskaart -f src/.jenkins/test/docker-compose.yml build && " +
                "docker-compose -p basiskaart -f src/.jenkins/test/docker-compose.yml run -u root --rm tests"
         }, {
             sh "docker-compose -p basiskaart -f src/.jenkins/test/docker-compose.yml down"
