@@ -31,10 +31,10 @@ def in_docker():
     docker env.
     :return: true when running in a docker container, false otherwise
     """
-    # noinspection PyBroadException,PyPep8
+    # noinspection PyBroadException
     try:
         return ':/docker/' in open('/proc/1/cgroup', 'r').read()
-    except:
+    except Exception:
         return False
 
 
