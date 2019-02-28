@@ -34,7 +34,7 @@ def in_docker():
     # noinspection PyBroadException
     try:
         return ':/docker/' in open('/proc/1/cgroup', 'r').read()
-    except:
+    except Exception:
         return False
 
 
@@ -108,13 +108,13 @@ if not BGT_OBJECTSTORE_PASSWORD:
 DEBUG = os.getenv('DEBUG', False) == '1'
 
 KBK10 = (
-    'bag_brk',                    # OBJECTSTORE
+    'bag_brk',  # OBJECTSTORE
     '/app/basiskaartdata/kbk10',  # unzip target
-    'Zip_bestanden',              # path
-    'Diva',                       # pathpredix
-    ['BRT10', 'KBK10'],           # import names
+    'Zip_bestanden',  # path
+    'Diva',  # pathpredix
+    ['BRT10', 'KBK10'],  # import names
     '.zip',
-    'kbk10'                       # schema
+    'kbk10'  # schema
 )
 
 KBK50 = (
@@ -142,7 +142,6 @@ BGT = (
     '-latest.zip',
     'bgt'  # schema
 )
-
 
 SOURCE_DATA_MAP = {
     'kbk10': (KBK10,),
