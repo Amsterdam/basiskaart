@@ -19,7 +19,7 @@ RUN apt-get update \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
 	&& adduser --system datapunt
 
-RUN wget https://bootstrap.pypa.io/get-pip.py
+RUN wget --no-check-certificate https://bootstrap.pypa.io/get-pip.py
 RUN python3.6 get-pip.py
 
 WORKDIR /app
