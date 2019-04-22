@@ -48,5 +48,5 @@ requests-mock==1.5.2
 rfc3986==1.2.0
 six==1.12.0
 stevedore==1.30.0
-urllib3==1.24.1
+urllib3==1.24.2
 wrapt==1.11.1
