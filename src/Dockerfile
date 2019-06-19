@@ -8,6 +8,7 @@ RUN apt-get update \
         python3.6 \
         python3.6-dev \
         python3.6-venv \
+        python3-distutils \
 	gcc \
 	g++ \
         libpq-dev \
