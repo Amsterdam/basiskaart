@@ -21,4 +21,4 @@ services:
       BAG_OBJECTSTORE_PASSWORD: ${BAG_OBJECTSTORE_PASSWORD}
       BGT_OBJECTSTORE_PASSWORD: ${BGT_OBJECTSTORE_PASSWORD}
     command: >
-      bash -c "./docker-import-db.sh"
+      bash -c ".jenkins/import/docker-import-db.sh"
