@@ -88,60 +88,70 @@ DATABASE = DATABASE_OPTIONS[get_database_key()]
 
 TEST_KEYS = os.path.expanduser('~/keys.env')
 
-BAG_OBJECTSTORE_PASSWORD = None
+GOB_OBJECTSTORE_PASSWORD = None
 BGT_OBJECTSTORE_PASSWORD = None
 if os.path.exists(TEST_KEYS):
     with open(TEST_KEYS, 'r') as testkeys:
         files = json.load(testkeys)
         if 'bag_brk' in files:
-            BAG_OBJECTSTORE_PASSWORD = files['bag_brk']
+            GOB_OBJECTSTORE_PASSWORD = files['bag_brk']
         if 'basiskaart' in files:
             BGT_OBJECTSTORE_PASSWORD = files['basiskaart']
 
-if not BAG_OBJECTSTORE_PASSWORD:
-    BAG_OBJECTSTORE_PASSWORD = os.getenv(
-        'BAG_OBJECTSTORE_PASSWORD', 'insecure')
+if not GOB_OBJECTSTORE_PASSWORD:
+    GOB_OBJECTSTORE_PASSWORD = os.getenv(
+        'GOB_OBJECTSTORE_PASSWORD', 'insecure')
 if not BGT_OBJECTSTORE_PASSWORD:
     BGT_OBJECTSTORE_PASSWORD = os.getenv(
         'BGT_OBJECTSTORE_PASSWORD', 'insecure')
 
 DEBUG = os.getenv('DEBUG', False) == '1'
 
-KBK10 = (
-    'bag_brk',  # OBJECTSTORE
-    '/app/basiskaartdata/kbk10',  # unzip target
-    'Zip_bestanden',  # path
-    'Diva',  # pathpredix
-    ['BRT10', 'KBK10'],  # import names
-    '.zip',
-    'kbk10'  # schema
-)
+gob_env = os.getenv('GOB_OBJECTSTORE_ENV', "acceptatie")
 
-KBK50 = (
-    'bag_brk',
-    '/app/basiskaartdata/kbk50',
-    'Zip_bestanden',
-    'Diva',
-    ['BRT50', 'KBK50'],
-    '.zip',
-    'kbk50'
-)
+KBK10 = {
+    'objectstore': "gob",
+    'container': "acceptatie",
+    'source_path': "brt/kbka10",
+    'target_dir': "/app/basiskaartdata/kbk10",
+    'filters': ["Esri_Shape"],
+    'suffix': "",
+    'is_zips': False,
+    'schema': "kbk10"
+}
 
-KBK25 = (
-    'bag_brk', '/app/basiskaartdata/kbk50', 'Zip_bestanden',
-    'Diva',
-    ['KBK25'],
-    '.zip',
-    'kbk25'
-)
+KBK50 = {
+    'objectstore': "gob",
+    'container': "acceptatie",
+    'source_path': "brt/kbka50",
+    'target_dir': "/app/basiskaartdata/kbk50",
+    'filters': ["Esri_Shape"],
+    'suffix': "",
+    'is_zips': False,
+    'schema': "kbk50"
+}
 
-BGT = (
-    'basiskaart', '/app/basiskaartdata/bgt', 'Basiskaart',
-    'BGT',
-    ['Esri_Shape_totaal'],
-    '-latest.zip',
-    'bgt'  # schema
-)
+KBK25 = {
+    'objectstore': "gob",
+    'container': "acceptatie",
+    'source_path': "brt/kbka25",
+    'target_dir': "/app/basiskaartdata/kbk50",
+    'filters': ["Esri_Shape"],
+    'suffix': "",
+    'is_zips': False,
+    'schema': "kbk25"
+}
+
+BGT = {
+    'objectstore': "basiskaart",
+    'container': "BGT",
+    'source_path': "Basiskaart",
+    'target_dir': "/app/basiskaartdata/bgt",
+    'filters': ["Esri_Shape_totaal"],
+    'suffix': "-latest.zip",
+    'is_zips': True,
+    'schema': "bgt"
+}
 
 SOURCE_DATA_MAP = {
     'kbk10': (KBK10,),

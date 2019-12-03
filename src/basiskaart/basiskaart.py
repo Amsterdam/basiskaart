@@ -106,17 +106,11 @@ def fill_basiskaart(shape_dir, schema):
     sql.run_sql("CREATE SCHEMA {}".format(schema))
     counters = {}
 
-    for extra_dir_nr in range(10):
-        extra_shapedir = os.path.join(shape_dir, str(extra_dir_nr+1))
+    if not os.path.exists(shape_dir):
+        return
 
-        if not os.path.exists(extra_shapedir):
-            continue
-
-        counters = count_shapes(extra_shapedir, counters)
-        sql.import_basiskaart(extra_shapedir, schema)
-
-    # if len(counters.keys()) < 10 and not DEBUG:
-    #     raise Exception('No or insufficient input shapefiles present')
+    counters = count_shapes(shape_dir, counters)
+    sql.import_basiskaart(shape_dir, schema)
 
     if schema == 'bgt':
         renamefields()
@@ -151,12 +145,7 @@ def is_name_match(metafile, matchpatterns, endswith):
     If filepath matches with file name conditions
     """
 
-    filepath = os.path.split(metafile['name'])
-
-    if len(filepath) != 2:
-        return False
-
-    filepath = filepath[1]
+    filepath = metafile['name']
 
     for name_match in matchpatterns:
 
@@ -173,9 +162,7 @@ def is_name_match(metafile, matchpatterns, endswith):
         return True
 
 
-def extract_source_files_basiskaart(
-        object_store_name, name, shapedir, prefix,
-        matchpatterns, endswith, list_source_files=False):
+def extract_source_files_basiskaart(sources, only_list_source_files=False):
     """
     Get zip from either local disk (for testing purposes) or from Objectstore
 
@@ -188,68 +175,74 @@ def extract_source_files_basiskaart(
     :return: None
     """
 
-    clear_output_dir(shapedir)
+    clear_output_dir(sources['target_dir'])
 
-    store = ObjectStore(prefix, object_store_name)
-    dir_listing = store.get_store_objects(name)
+    store = ObjectStore(sources['container'], sources['objectstore'])
+    dir_listing = store.get_store_objects(sources['source_path'])
 
-    log.info("\nDownload shape files zip into '%s'", shapedir)
+    log.info("\nDownload shape files into '%s'", sources['target_dir'])
 
-    extra_dir_nr = 0
-
+    file_count = 0
     for metafile in dir_listing:
-
-        # log.info("Found in objectstore: " + metafile['name'])
-
-        if not is_name_match(metafile, matchpatterns, endswith):
+        if metafile['content_type'] == "application/directory":
             continue
 
-        # store this on disk..
-        # and skip if already there..
-        if list_source_files:
+        if not is_name_match(metafile, sources['filters'], sources['suffix']):
             continue
 
-        extra_dir_nr += 1
-        extra_shapedir = os.path.join(shapedir, str(extra_dir_nr))
-        unzip_source_file(store, metafile, extra_shapedir)
+        if only_list_source_files:
+            continue
+
+        file_count += 1
+        get_source_file(store,
+                        metafile,
+                        sources['source_path'],
+                        sources['target_dir'],
+                        sources['is_zips'])
 
     # check if we actualy downloaded something
-    if extra_dir_nr == 0 and not list_source_files:
-        raise Exception('Download directory not found, no shapes imported')
+    if file_count == 0 and not only_list_source_files:
+        raise Exception('Download directory left empty, no shapes imported')
 
 
-def unzip_source_file(store, metafile, extra_shapedir):
+def get_source_file(store, metafile, source_path, target_dir, is_zips):
     """
     Download objectsore file and unzip it at shapedir
     """
+
     content = BytesIO(store.get_store_object(metafile['name']))
 
-    log.info("make a zip metafile from: %s", metafile['name'])
-    inzip = zipfile.ZipFile(content)
-    del content
+    if is_zips:
+        log.info("make a zip metafile from: %s", metafile['name'])
+        inzip = zipfile.ZipFile(content)
+        del content
 
-    log.info("Extract %s to temp directory %s",
-             metafile['name'], extra_shapedir)
+        log.info("Extract %s to temp directory %s",
+                 metafile['name'], target_dir)
 
-    inzip.extractall(extra_shapedir)
+        inzip.extractall(target_dir)
+    else:
+        target_file = metafile['name'].replace(source_path, target_dir)
+        directory = os.path.split(target_file)[0]
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        with open(target_file, 'wb') as file:
+            file.write(content.read())
 
 
-def process_basiskaart(kbk_name, list_source_files=False):
+def process_basiskaart(kbk_name, only_list_source_files=False):
     """
     Download objectstore bestanden en zet deze in de database
 
     param: list_source_items only show which files would be downloaded
     """
-    for object_store_name, shapedir, path, prefix, \
-            matchpaterns, endswith, schema in SOURCE_DATA_MAP[kbk_name]:
+    for sources in SOURCE_DATA_MAP[kbk_name]:
 
         extract_source_files_basiskaart(
-            object_store_name, path, shapedir,
-            prefix, matchpaterns, endswith,
-            list_source_files=list_source_files
+            sources, only_list_source_files=only_list_source_files
         )
 
-        if list_source_files:
+        if only_list_source_files:
             continue
 
-        fill_basiskaart(shapedir, schema)
+        fill_basiskaart(sources['target_dir'], sources['schema'])

@@ -4,7 +4,7 @@ from swiftclient.client import Connection
 
 from basiskaart import basiskaart_setup
 
-BAG_OBJECTSTORE_PASSWORD = basiskaart_setup.BAG_OBJECTSTORE_PASSWORD
+GOB_OBJECTSTORE_PASSWORD = basiskaart_setup.GOB_OBJECTSTORE_PASSWORD
 BGT_OBJECTSTORE_PASSWORD = basiskaart_setup.BGT_OBJECTSTORE_PASSWORD
 
 log = logging.getLogger(__name__)
@@ -29,12 +29,12 @@ class ObjectStore:
     RESP_LIMIT = 10000  # serverside limit of the response
 
     def __init__(self, container, name):
-        if name == 'bag_brk':
-            OBJECTSTORE['user'] = 'bag_brk'
-            OBJECTSTORE['key'] = BAG_OBJECTSTORE_PASSWORD
+        if name == 'gob':
+            OBJECTSTORE['user'] = 'GOB_User'
+            OBJECTSTORE['key'] = GOB_OBJECTSTORE_PASSWORD
             OBJECTSTORE['os_options'][
-                'tenant_id'] = '4f2f4b6342444c84b3580584587cfd18'
-            OBJECTSTORE['tenant_name'] = 'BGE000081_BAG'
+                'tenant_id'] = '2ede4a78773e453db73f52500ef748e5'
+            OBJECTSTORE['tenant_name'] = 'BGE000081 GOB'
         else:
             OBJECTSTORE['user'] = 'basiskaart'
             OBJECTSTORE['key'] = BGT_OBJECTSTORE_PASSWORD

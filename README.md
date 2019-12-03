@@ -30,7 +30,7 @@ Het script tolereert ontbrekende tabellen en kolommen in de shape tabellen.
     
 
  ### run database import
-- export BAG_OBJECTSTORE_PASSWORD=xxxx
+- export GOB_OBJECTSTORE_PASSWORD=xxxx
 - export BGT_OBJECTSTORE_PASSWORD=xxxx
 - docker-compose up -d --build
 

@@ -13,7 +13,7 @@ services:
       - database
     environment:
       DEBUG: 1
-      BAG_OBJECTSTORE_PASSWORD:
+      GOB_OBJECTSTORE_PASSWORD:
       BGT_OBJECTSTORE_PASSWORD:
       DATABASE_NAME: basiskaart
       DATABASE_PASSWORD: insecure

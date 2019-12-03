@@ -49,7 +49,7 @@ def handle_import(userargs):
 
     if userargs.listsourcefiles:
         # show which zip files will be downloaded.
-        process_basiskaart(userargs.basiskaart, list_source_files=True)
+        process_basiskaart(userargs.basiskaart, only_list_source_files=True)
         return
 
     if userargs.createindexes:
