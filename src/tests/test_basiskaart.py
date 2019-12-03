@@ -33,7 +33,7 @@ def test_kbk10():
     Test kbk10
     :return:
     """
-    temp_directory = SOURCE_DATA_MAP['kbk10'][0][1]
+    temp_directory = SOURCE_DATA_MAP['kbk10'][0]['target_dir']
     shutil.rmtree(temp_directory, ignore_errors=True)
     os.path.realpath(__file__)
     fill_basiskaart(temp_directory, 'kbk10')
@@ -47,7 +47,7 @@ def test_kbk50():
     Test kbk50
     :return:
     """
-    temp_directory = SOURCE_DATA_MAP['kbk50'][0][1]
+    temp_directory = SOURCE_DATA_MAP['kbk50'][0]['target_dir']
     shutil.rmtree(temp_directory, ignore_errors=True)
     fill_basiskaart(temp_directory, 'kbk50')
 
@@ -60,7 +60,7 @@ def test_bgt():
     test bgt
     :return:
     """
-    temp_directory = SOURCE_DATA_MAP['bgt'][0][1]
+    temp_directory = SOURCE_DATA_MAP['bgt'][0]['target_dir']
     shutil.rmtree(temp_directory, ignore_errors=True)
     fill_basiskaart(temp_directory, 'bgt')
     checkcolumns = (
