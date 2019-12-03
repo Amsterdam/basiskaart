@@ -36,9 +36,6 @@ def test_kbk10():
     temp_directory = SOURCE_DATA_MAP['kbk10'][0][1]
     shutil.rmtree(temp_directory, ignore_errors=True)
     os.path.realpath(__file__)
-    shutil.copytree(
-        os.path.dirname(os.path.realpath(__file__)) + '/fixtures/kbk10',
-        temp_directory + '/1')
     fill_basiskaart(temp_directory, 'kbk10')
 
     checkcolumns = ('ogc_fid', 'geom', 'WDL_bre_ID', 'AREA')
@@ -52,9 +49,6 @@ def test_kbk50():
     """
     temp_directory = SOURCE_DATA_MAP['kbk50'][0][1]
     shutil.rmtree(temp_directory, ignore_errors=True)
-    shutil.copytree(
-        os.path.dirname(os.path.realpath(__file__)) + '/fixtures/kbka50',
-        temp_directory + '/1')
     fill_basiskaart(temp_directory, 'kbk50')
 
     checkcolumns = ('ogc_fid', 'geom', 'KRT_A_w_ID', 'AREA')
@@ -68,9 +62,6 @@ def test_bgt():
     """
     temp_directory = SOURCE_DATA_MAP['bgt'][0][1]
     shutil.rmtree(temp_directory, ignore_errors=True)
-    shutil.copytree(
-        os.path.dirname(os.path.realpath(__file__)) + '/fixtures/bgt',
-        temp_directory + '/1')
     fill_basiskaart(temp_directory, 'bgt')
     checkcolumns = (
         'ogc_fid', 'geometrie', 'identificatie_namespace',
