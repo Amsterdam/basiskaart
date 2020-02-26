@@ -9,7 +9,7 @@ services:
       - ./backups:/tmp/backups
 
   importer:
-    image: repo.data.amsterdam.nl/datapunt/basiskaart:${ENVIRONMENT}
+    image: ${DOCKER_REGISTRY_HOST}/datapunt/basiskaart:${ENVIRONMENT}
     links:
       - database
     environment:
