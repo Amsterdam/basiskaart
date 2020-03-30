@@ -167,6 +167,9 @@ def geo_index(schema, table, geo_field):
 
     table_lower = table.lower()
 
+    # Extended logic not only creates geo indexes.
+    #  But first clustering objects by geo coordinates on disk for faster access.
+    #  credits for this solution go to: Edward Mac Gillavry
     s = f"""
     SET SEARCH_PATH TO {schema},public;
     CREATE INDEX index_{table_lower}_geohash_idx
