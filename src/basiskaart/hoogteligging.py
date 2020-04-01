@@ -167,16 +167,11 @@ def geo_index(schema, table, geo_field):
 
     table_lower = table.lower()
 
-    # Extended logic not only creates geo indexes.
-    #  But first clustering objects by geo coordinates on disk for faster access.
-    #  credits for this solution go to: Edward Mac Gillavry
     s = f"""
-    SET SEARCH_PATH TO {schema},public;
-    CREATE INDEX index_{table_lower}_geohash_idx
-     ON "{table}" (ST_GeoHash(ST_Transform(ST_Envelope({geo_field}),4326),10) COLLATE "C");
-    CLUSTER "{table}" USING "index_{table_lower}_geohash_idx";
-    DROP INDEX index_{table_lower}_geohash_idx;
-    CREATE INDEX IF NOT EXISTS index_{table_lower}_gist ON "{table}" USING gist({geo_field});
+    SET SEARCH_PATH TO {schema};
+    CREATE INDEX IF NOT EXISTS index_{table_lower}_gist ON "{table}"
+    USING gist({geo_field});
+    CLUSTER "{table}" USING "index_{table_lower}_gist";
     """
 
     sql.run_sql(s)
