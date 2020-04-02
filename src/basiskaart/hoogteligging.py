@@ -246,10 +246,32 @@ def create_indexes():
     """
     Create GEO indexes and column btree indexes for all schemas
     """
+
+    initial_work_mem = None
+    initial_maintenance_work_mem = None
+    try:
+        initial_work_mem = sql.run_sql("SHOW work_mem")[0][0]
+    except Exception:
+        log.debug("Failed to fetch initial work memory setting")
+    try:
+        initial_maintenance_work_mem = sql.run_sql("SHOW maintenance_work_mem")[0][0]
+    except Exception:
+        log.debug("Failed to fetch initial work memory setting")
+
+    if initial_work_mem is not None:
+        sql.run_sql_no_results("SET work_mem TO '2GB';")
+    if initial_maintenance_work_mem is not None:
+        sql.run_sql_no_results("SET maintenance_work_mem TO '1GB';")
+
     for schema in ['kbk10', 'kbk25', 'kbk50', 'bgt']:
         make_indexes_on_all_tables(schema)
         make_geoindexes_on_all_matviews(schema)
 
+    if initial_work_mem is not None:
+        sql.run_sql_no_results(f"SET work_mem TO '{initial_work_mem}';")
+    if initial_maintenance_work_mem is not None:
+        sql.run_sql_no_results(
+            f"SET maintenance_work_mem TO '{initial_maintenance_work_mem}';")
 
 # Keep track of columns, views and counts to
 # be able to report errors..
