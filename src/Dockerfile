@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:18.04
 # deze wordt gebruikt omdat er een late versie van gdal-bin gesupport wordt, deze in niet aanwezig in debian wheezy
 # met python3.6
 
