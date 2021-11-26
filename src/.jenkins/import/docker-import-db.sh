@@ -6,5 +6,7 @@ set -x   # log every command.
 
 source /.jenkins-import/docker-wait.sh
 
+echo "GOB Objectstore container: $GOB_OBJECTSTORE_ENV"
+
 # load data in database
 python /app/import_basiskaart.py

@@ -45,6 +45,8 @@ class ObjectStore:
         self.conn = Connection(**OBJECTSTORE)
         self.container = container
 
+        logging.info("Initialized objectstore: %s (%s)", OBJECTSTORE['tenant_name'], self.container)
+
     def get_store_object(self, name):
         """
         Returns the object store
