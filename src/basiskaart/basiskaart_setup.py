@@ -111,7 +111,7 @@ gob_env = os.getenv('GOB_OBJECTSTORE_ENV', "acceptatie")
 
 KBK10 = {
     'objectstore': "gob",
-    'container': "acceptatie",
+    'container': gob_env,
     'source_path': "brt/kbka10",
     'target_dir': "/app/basiskaartdata/kbk10",
     'filters': ["Esri_Shape"],
@@ -122,7 +122,7 @@ KBK10 = {
 
 KBK50 = {
     'objectstore': "gob",
-    'container': "acceptatie",
+    'container': gob_env,
     'source_path': "brt/kbka50",
     'target_dir': "/app/basiskaartdata/kbk50",
     'filters': ["Esri_Shape"],
@@ -133,7 +133,7 @@ KBK50 = {
 
 KBK25 = {
     'objectstore': "gob",
-    'container': "acceptatie",
+    'container': gob_env,
     'source_path': "brt/kbka25",
     'target_dir': "/app/basiskaartdata/kbk50",
     'filters': ["Esri_Shape"],
