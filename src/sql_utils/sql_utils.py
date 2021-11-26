@@ -189,10 +189,7 @@ class SQLRunner(object):
             'Logging into %s:%s db %s.%s',
             self.host, self.port, dbname, schema)
 
-        return "host={} port={} active_schema={} user={} " \
-               "dbname={} password={}".format(self.host, self.port,
-                                              schema, self.user, dbname,
-                                              self.password)
+        return f"host={self.host} port={self.port} user={self.user} dbname={dbname} password={self.password}"
 
 
 def process_shp_file(sql, filename, schema, root):
@@ -225,7 +222,7 @@ def run_subprocess_ogr(sql, appendtext, schema, root, filename):
         '"EPSG:28992" {LCO} {CONF} {FNAME}'.format(
             PG=sql.get_ogr2_ogr_login(schema, 'basiskaart'),
             LCO='-lco SPATIAL_INDEX=OFF -lco PRECISION=NO -lco '
-                'LAUNDER=NO -lco GEOMETRY_NAME=geom',
+                f'LAUNDER=NO -lco GEOMETRY_NAME=geom -lco SCHEMA={schema}',
             CONF='--config PG_USE_COPY YES',
             FNAME=root + '/' + filename + '.shp',
             APND=appendtext)
