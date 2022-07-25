@@ -3,6 +3,8 @@
 import logging
 import os
 import shutil
+import struct
+import subprocess
 import zipfile
 from io import BytesIO
 
@@ -58,12 +60,16 @@ fieldmapping = {
 
 def count_shapes_persubdir(counters, path, dbfs):
     for dbf in dbfs:
-        sf = shapefile.Reader(os.path.join(path, dbf))
+        try:
+            len_shapes = len(shapefile.Reader(os.path.join(path, dbf)))
+        except struct.error:  # invalid dbf header/file
+            len_shapes = 0
+
         shapename = dbf.split('.')[0]
         if shapename in counters:
-            counters[shapename][0] += len(sf.shapes())
+            counters[shapename][0] += len_shapes
         else:
-            counters[shapename] = [len(sf.shapes()), 0]
+            counters[shapename] = [len_shapes, 0]
     return counters
 
 
@@ -205,29 +211,41 @@ def extract_source_files_basiskaart(sources, only_list_source_files=False):
         raise Exception('Download directory left empty, no shapes imported')
 
 
+def _fix_corrupt_zip(zip_content: bytes) -> bytes:
+    """Returns zipfile bytes which is seekable by python's ZipFile."""
+    return subprocess.run(
+        ["/usr/bin/zip", "-FF", "--out"],
+        input=zip_content,
+        stdout=subprocess.PIPE,
+        shell=True,
+        check=True
+    ).stdout
+
+
 def get_source_file(store, metafile, source_path, target_dir, is_zips):
     """
     Download objectsore file and unzip it at shapedir
     """
-
-    content = BytesIO(store.get_store_object(metafile['name']))
+    content = store.get_store_object(metafile['name'])
 
     if is_zips:
-        log.info("make a zip metafile from: %s", metafile['name'])
-        inzip = zipfile.ZipFile(content)
-        del content
+        log.info("Extract %s to temp directory %s", metafile['name'], target_dir)
 
-        log.info("Extract %s to temp directory %s",
-                 metafile['name'], target_dir)
+        try:
+            zipfile.ZipFile(BytesIO(content)).extractall(target_dir)
+        except (zipfile.BadZipfile, OSError, ValueError):
+            # Catch possible OSError: [Errno 22] Invalid argument
+            # Catch possible ValueError: negative seek value
+            content = _fix_corrupt_zip(content)
+            zipfile.ZipFile(BytesIO(content)).extractall(target_dir)
 
-        inzip.extractall(target_dir)
     else:
         target_file = metafile['name'].replace(source_path, target_dir)
         directory = os.path.split(target_file)[0]
         if not os.path.exists(directory):
             os.makedirs(directory)
         with open(target_file, 'wb') as file:
-            file.write(content.read())
+            file.write(content)
 
 
 def process_basiskaart(kbk_name, only_list_source_files=False):
