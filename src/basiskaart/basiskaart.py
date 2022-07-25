@@ -208,7 +208,12 @@ def extract_source_files_basiskaart(sources, only_list_source_files=False):
 
 def _fix_corrupt_zip(zip_content: bytes) -> bytes:
     """Returns zipfile bytes which is seekable by python's ZipFile."""
-    return subprocess.run(["zip", "-F", "--out -", "-"], input=zip_content, capture_output=True, shell=True).stdout
+    return subprocess.run(
+        ["zip", "-F", "--out -", "-"],
+        input=zip_content,
+        stdout=subprocess.PIPE,
+        shell=True
+    ).stdout
 
 
 def get_source_file(store, metafile, source_path, target_dir, is_zips):
