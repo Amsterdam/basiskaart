@@ -3,6 +3,7 @@
 import logging
 import os
 import shutil
+import subprocess
 import zipfile
 from io import BytesIO
 
@@ -205,12 +206,17 @@ def extract_source_files_basiskaart(sources, only_list_source_files=False):
         raise Exception('Download directory left empty, no shapes imported')
 
 
+def _fix_corrupt_zip(zip_content: bytes) -> bytes:
+    """Returns zipfile bytes which is seekable by python's ZipFile."""
+    return subprocess.run(["zip", "-F", "--out -", "-"], input=zip_content, capture_output=True, shell=True).stdout
+
+
 def get_source_file(store, metafile, source_path, target_dir, is_zips):
     """
     Download objectsore file and unzip it at shapedir
     """
-
-    content = BytesIO(store.get_store_object(metafile['name']))
+    content = store.get_store_object(metafile['name'])
+    content = BytesIO(_fix_corrupt_zip(content))
 
     if is_zips:
         log.info("make a zip metafile from: %s", metafile['name'])
