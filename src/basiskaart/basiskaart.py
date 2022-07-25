@@ -221,24 +221,24 @@ def get_source_file(store, metafile, source_path, target_dir, is_zips):
     Download objectsore file and unzip it at shapedir
     """
     content = store.get_store_object(metafile['name'])
-    content = BytesIO(_fix_corrupt_zip(content))
 
     if is_zips:
-        log.info("make a zip metafile from: %s", metafile['name'])
-        inzip = zipfile.ZipFile(content)
-        del content
+        log.info("Extract %s to temp directory %s", metafile['name'], target_dir)
 
-        log.info("Extract %s to temp directory %s",
-                 metafile['name'], target_dir)
+        try:
+            zipfile.ZipFile(BytesIO(content)).extractall(target_dir)
+        except (zipfile.BadZipfile, OSError):
+            # Catch possible OSError: [Errno 22] Invalid argument
+            content = _fix_corrupt_zip(content)
+            zipfile.ZipFile(BytesIO(content)).extractall(target_dir)
 
-        inzip.extractall(target_dir)
     else:
         target_file = metafile['name'].replace(source_path, target_dir)
         directory = os.path.split(target_file)[0]
         if not os.path.exists(directory):
             os.makedirs(directory)
         with open(target_file, 'wb') as file:
-            file.write(content.read())
+            file.write(content)
 
 
 def process_basiskaart(kbk_name, only_list_source_files=False):
