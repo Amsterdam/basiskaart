@@ -227,8 +227,9 @@ def get_source_file(store, metafile, source_path, target_dir, is_zips):
 
         try:
             zipfile.ZipFile(BytesIO(content)).extractall(target_dir)
-        except (zipfile.BadZipfile, OSError):
+        except (zipfile.BadZipfile, OSError, ValueError):
             # Catch possible OSError: [Errno 22] Invalid argument
+            # Catch possible ValueError: negative seek value
             content = _fix_corrupt_zip(content)
             zipfile.ZipFile(BytesIO(content)).extractall(target_dir)
 
