@@ -85,7 +85,8 @@ class SQLRunner(object):
                 return dbcur.fetchall()
             return []
 
-        except psycopg2.DatabaseError as e:
+        except psycopg2.Error as e:
+            log.debug(script)
             log.debug("Database script exception: :%s", str(e))
             raise Exception(e)
 
