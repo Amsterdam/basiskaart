@@ -4,7 +4,6 @@ import logging
 import os
 import shutil
 import struct
-import subprocess
 import zipfile
 from io import BytesIO
 
@@ -211,17 +210,6 @@ def extract_source_files_basiskaart(sources, only_list_source_files=False):
         raise Exception('Download directory left empty, no shapes imported')
 
 
-def _fix_corrupt_zip(zip_content: bytes) -> bytes:
-    """Returns zipfile bytes which is seekable by python's ZipFile."""
-    return subprocess.run(
-        ["/usr/bin/zip", "-FF", "--out"],
-        input=zip_content,
-        stdout=subprocess.PIPE,
-        shell=True,
-        check=True
-    ).stdout
-
-
 def get_source_file(store, metafile, source_path, target_dir, is_zips):
     """
     Download objectsore file and unzip it at shapedir
@@ -231,13 +219,19 @@ def get_source_file(store, metafile, source_path, target_dir, is_zips):
     if is_zips:
         log.info("Extract %s to temp directory %s", metafile['name'], target_dir)
 
+        zipped_file = zipfile.ZipFile(BytesIO(content))
+
         try:
-            zipfile.ZipFile(BytesIO(content)).extractall(target_dir)
-        except (zipfile.BadZipfile, OSError, ValueError):
-            # Catch possible OSError: [Errno 22] Invalid argument
-            # Catch possible ValueError: negative seek value
-            content = _fix_corrupt_zip(content)
-            zipfile.ZipFile(BytesIO(content)).extractall(target_dir)
+            first_bad_file = zipped_file.testzip()
+
+            if first_bad_file is not None:
+                raise zipfile.BadZipfile(f"First bad file in zip: {first_bad_file}")
+
+        except Exception as err:
+            raise zipfile.BadZipfile(f"Zip file contains errors: {metafile['name']}") from err
+
+        else:
+            zipped_file.extractall(target_dir)
 
     else:
         target_file = metafile['name'].replace(source_path, target_dir)
