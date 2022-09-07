@@ -3,7 +3,6 @@
 import logging
 import os
 import shutil
-import struct
 import zipfile
 from io import BytesIO
 
@@ -12,6 +11,11 @@ import shapefile
 from basiskaart.basiskaart_setup import SOURCE_DATA_MAP
 from objectstore.objectstore import ObjectStore
 from sql_utils.sql_utils import SQLRunner, createdb
+
+
+class ShapeFileError(Exception):
+    pass
+
 
 log = logging.getLogger(__name__)
 sql = SQLRunner()
@@ -57,18 +61,27 @@ fieldmapping = {
 }
 
 
+def validate_shp(path: str) -> int:
+    try:
+        features = shapefile.Reader(path)
+    except Exception as err:
+        raise ShapeFileError(path) from err
+    else:
+        return len(features)
+
+
 def count_shapes_persubdir(counters, path, dbfs):
+
     for dbf in dbfs:
-        try:
-            len_shapes = len(shapefile.Reader(os.path.join(path, dbf)))
-        except struct.error:  # invalid dbf header/file
-            len_shapes = 0
+        len_shapes = validate_shp(os.path.join(path, dbf))
 
         shapename = dbf.split('.')[0]
+
         if shapename in counters:
             counters[shapename][0] += len_shapes
         else:
             counters[shapename] = [len_shapes, 0]
+
     return counters
 
 
