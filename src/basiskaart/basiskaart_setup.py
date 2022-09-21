@@ -145,7 +145,7 @@ KBK25 = {
 BGT = {
     'objectstore': "basiskaart",
     'container': "BGT",
-    'source_path': os.path.join("Basiskaart", OBJECTSTORE_ENV),  # Basiskaart/accepatie | Basiskaart/productie
+    'source_path': os.path.join("Basiskaart", OBJECTSTORE_ENV),  # Basiskaart/acceptatie | Basiskaart/productie
     'target_dir': "/app/basiskaartdata/bgt",
     'filters': ["Esri_Shape_totaal"],
     'suffix': "-latest.zip",
