@@ -107,11 +107,11 @@ if not BGT_OBJECTSTORE_PASSWORD:
 
 DEBUG = os.getenv('DEBUG', False) == '1'
 
-gob_env = os.getenv('GOB_OBJECTSTORE_ENV', "acceptatie")
+OBJECTSTORE_ENV = os.getenv('OBJECTSTORE_ENV', "acceptatie")
 
 KBK10 = {
     'objectstore': "gob",
-    'container': gob_env,
+    'container': OBJECTSTORE_ENV,
     'source_path': "brt/kbka10",
     'target_dir': "/app/basiskaartdata/kbk10",
     'filters': ["Esri_Shape"],
@@ -122,7 +122,7 @@ KBK10 = {
 
 KBK50 = {
     'objectstore': "gob",
-    'container': gob_env,
+    'container': OBJECTSTORE_ENV,
     'source_path': "brt/kbka50",
     'target_dir': "/app/basiskaartdata/kbk50",
     'filters': ["Esri_Shape"],
@@ -133,7 +133,7 @@ KBK50 = {
 
 KBK25 = {
     'objectstore': "gob",
-    'container': gob_env,
+    'container': OBJECTSTORE_ENV,
     'source_path': "brt/kbka25",
     'target_dir': "/app/basiskaartdata/kbk50",
     'filters': ["Esri_Shape"],
@@ -145,7 +145,7 @@ KBK25 = {
 BGT = {
     'objectstore': "basiskaart",
     'container': "BGT",
-    'source_path': "Basiskaart",
+    'source_path': os.path.join("Basiskaart", OBJECTSTORE_ENV),  # Basiskaart/accepatie | Basiskaart/productie
     'target_dir': "/app/basiskaartdata/bgt",
     'filters': ["Esri_Shape_totaal"],
     'suffix': "-latest.zip",
