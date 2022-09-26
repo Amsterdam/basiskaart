@@ -20,6 +20,6 @@ services:
       BGT_OBJECTSTORE_PASSWORD:
       DATABASE_HOST_OVERRIDE: database
       DATABASE_PORT_OVERRIDE: 5432
-      GOB_OBJECTSTORE_ENV: ${GOB_OBJECTSTORE_ENV}
+      OBJECTSTORE_ENV: ${OBJECTSTORE_ENV}
     command: >
       bash -c "/.jenkins-import/docker-import-db.sh"
