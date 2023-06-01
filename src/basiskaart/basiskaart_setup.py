@@ -54,7 +54,7 @@ class LocationKey:
 def get_database_key():
     if os.getenv(OVERRIDE_HOST_ENV_VAR):
         return LocationKey.override
-    elif in_docker():
+    elif in_docker() or os.getenv("PLATFORM") == 'docker':
         return LocationKey.docker
 
     return LocationKey.local

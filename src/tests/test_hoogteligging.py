@@ -35,7 +35,6 @@ def setup_module():
     create_indexes()
 
 
-@pytest.mark.skip
 def test_hoogteview():
 
     sql = sql_utils.SQLRunner()
@@ -46,7 +45,6 @@ def test_hoogteview():
         assert exists[0][0]
 
 
-@pytest.mark.skip
 def test_create_indexes():
     """
     Check that EVERY table has a 'gist' index

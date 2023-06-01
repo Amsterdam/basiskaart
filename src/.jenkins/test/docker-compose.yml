@@ -17,8 +17,9 @@ services:
       BGT_OBJECTSTORE_PASSWORD:
       DATABASE_NAME: basiskaart
       DATABASE_PASSWORD: insecure
+      PLATFORM: docker
     command: >
-      bash -c "/app/.jenkins/import/docker-wait.sh \
-              && cd /app/.jenkins/test/ \
-              && ./docker-code-check.sh \
-              && ./docker-test.sh"
+      bash -c "/app/.jenkins/import/docker-wait.sh &&
+              cd /app/.jenkins/test/ &&
+              ./docker-code-check.sh &&
+              ./docker-test.sh "
