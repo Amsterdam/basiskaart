@@ -47,7 +47,6 @@ def test_kbk10():
     checktable('kbk10."WDL_breed_water"', checkcolumns)
 
 
-@pytest.mark.skip
 def test_kbk50():
     """
     Test kbk50
@@ -64,7 +63,6 @@ def test_kbk50():
     checktable('kbk50."KRT_A_wegnummer_bord"', checkcolumns)
 
 
-@pytest.mark.skip
 def test_bgt():
     """
     test bgt
