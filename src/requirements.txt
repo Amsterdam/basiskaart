@@ -8,6 +8,7 @@ pytest==6.2.5
 pytest-mock==3.6.1
 pytest-pythonpath==0.7.4
 python-swiftclient==4.3.0
+python-keystoneclient==5.1.0
 PyYAML==6.0
 requests==2.31.0
 requests-mock==1.10.0
