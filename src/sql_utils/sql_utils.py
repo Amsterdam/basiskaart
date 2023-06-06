@@ -225,13 +225,12 @@ def run_subprocess_ogr(sql, appendtext, schema, root, filename):
         'PG:"{PG}" -gt 655360 -s_srs "EPSG:28992" -t_srs '
         '"EPSG:28992" {LCO} {CONF} {FNAME}'.format(
             PG=sql.get_ogr2_ogr_login(schema, 'basiskaart'),
-            LCO='-lco SPATIAL_INDEX=OFF -lco PRECISION=NO -lco '
+            LCO='-lco SPATIAL_INDEX=NONE -lco PRECISION=NO -lco '
                 'LAUNDER=NO -lco GEOMETRY_NAME=geom',
             CONF='--config PG_USE_COPY YES',
             FNAME=root + '/' + filename + '.shp',
             APND=appendtext)
     )
-
     subprocess.call(command, shell=True)
 
 
